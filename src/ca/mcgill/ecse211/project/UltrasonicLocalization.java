@@ -4,7 +4,7 @@ import static ca.mcgill.ecse211.project.Resources.*;
 import lejos.hardware.Sound;
 
 /**
- * The UsLocalizer class implements the ultrasonic localization techniques using
+ * The UltrasonicLocalization class implements the ultrasonic localization techniques using
  * falling edge. Also implements movement to the point (1,1) using ultrasonic sensor
  */
 public class UltrasonicLocalization {
@@ -40,31 +40,19 @@ public class UltrasonicLocalization {
   private double rotationAngle = 0.0;
 
   /**
-   * Enum to indicate whether to use falling edge or rising edge localization technique.
-   */
-  public enum edgeType {
-    FallingEdge;
-  }
-
-  private edgeType type; // instance variable to contain the localization technique
-
-  /**
    * Array to contain the data returned by reading the ultrasonic sensor.
    */
   private float[] usData = new float[usSensor.sampleSize()];
 
   /**
-   * Constructor for the {@code UsLocalizer} class. Sets the localization technique 
-   * (rising or falling edge).
-   * 
-   * @param type The localization technique - falling edge
+   * Constructor for the {@code UsLocalizer} class.
+   *
    */
   public UltrasonicLocalization() {
-    this.type = edgeType.FallingEdge;
   }
 
   /**
-   * Performs localization process based on falling edge technique.
+   * Performs localization process based on falling edge technique, localizes the heading to 0 degrees
    */
   public void doLocalization() {
     double angleA;  // angle to first falling edge
@@ -74,7 +62,6 @@ public class UltrasonicLocalization {
     leftMotor.setSpeed(MOTOR_ROT);
     rightMotor.setSpeed(MOTOR_ROT);
 
-    if (this.type == edgeType.FallingEdge) {
       // represents case where robot starts off facing the wall; turn away from the wall
       while (readUsDistance() < INITIAL_DIST_THRESHOLD) {
         rotateClockwise();
@@ -122,8 +109,8 @@ public class UltrasonicLocalization {
 
       leftMotor.rotate(-getDistance(WHEEL_RAD, BASE_WIDTH, rotationAngle - TURNING_ERROR), true);
       rightMotor.rotate(getDistance(WHEEL_RAD, BASE_WIDTH, rotationAngle - TURNING_ERROR), false);
-    } 
-  }
+} 
+
 
   /**
    * Converts angle from degrees to radians.
@@ -140,7 +127,7 @@ public class UltrasonicLocalization {
    * 
    * @return filtered distance value read by ultrasonic sensor
    */
-  public int readUsDistance() {
+  private int readUsDistance() {
     usSensor.fetchSample(usData, 0);
     // extract from buffer, convert to cm, cast to int, and filter
     return filter((int) (usData[0] * 100.0)); // *100 for cm instead of m
@@ -152,7 +139,7 @@ public class UltrasonicLocalization {
    * @param distance raw distance measured by the sensor in cm
    * @return the filtered distance in cm
    */
-  int filter(int distance) {
+  private int filter(int distance) {
     if (distance >= 255 && invalidSampleCount < INVALID_SAMPLE_LIMIT) {
       // bad value, increment the filter value and return the distance remembered from before
       invalidSampleCount++;
@@ -219,7 +206,7 @@ public class UltrasonicLocalization {
    * @param angle the input angle
    * @return the wheel rotations necessary to rotate the robot by the angle
    */
-  public int angleToDist(double angle) {
+  private int angleToDist(double angle) {
     return convertDistance(WHEEL_RAD, Math.PI * BASE_WIDTH * angle / 360.0);
   }
 
@@ -235,13 +222,6 @@ public class UltrasonicLocalization {
   public void turnBy(double angle) {
     leftMotor.rotate(angleToDist(angle), true);
     rightMotor.rotate(-angleToDist(angle), false);
-  }
-
-  /**
-   * Gets the current angle that the robot needs to rotate.
-   */
-  public double getAngle() {
-    return this.rotationAngle;
   }
 
   /**
@@ -285,15 +265,6 @@ public class UltrasonicLocalization {
     rightMotor.rotate(convertDistance(WHEEL_RAD, distX - ROBOT_LENGTH), false);
 
     turnBy(-TURN_90); // rotate by -90 degrees
-  }
-  
-  
-  /*
-   * reads values form light sensor
-   */
-  public float getLightVal() {
-    lightSensor.getRedMode().fetchSample(lightValue , 0);
-    return lightValue[0] * 100;
   }
 
 }

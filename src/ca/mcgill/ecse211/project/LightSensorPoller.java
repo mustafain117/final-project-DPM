@@ -24,6 +24,9 @@ public class LightSensorPoller implements Runnable {
    */
   private static float colorLeft[]= new float[colorSensorLeft.sampleSize()];
   
+  /**
+   * Records samples from all three light sensors into colourData, colorRight and colorLeft arrays.
+   */
   public void run() {
     long updateStart;
     long updateDuration;

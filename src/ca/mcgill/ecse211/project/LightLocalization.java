@@ -83,7 +83,7 @@ public class LightLocalization {
   }
   
   /**
-   * Method for first part of LS correction (Y correction)
+   * Corrects the ev3 along the y axis, first part of the light correction
    */
   public static void odoCorrectionFirst(){
     while(true) {
@@ -142,7 +142,7 @@ public class LightLocalization {
     }
   }
   /**
-   * Second part of LS correction (X axis)
+   * Corrects the ev3 along the x axis, second part of light sensor correction
    */
   public static void odoCorrectionSecond() {   
     //Go over line to then mov backwards into it
@@ -237,9 +237,9 @@ public class LightLocalization {
   
   /**
    * Sleep the program for a given duration of time
-   * @param duration
+   * @param duration The sleep duaration in milliseconds
    */
-  public static void sleepFor(long duration) {
+  private static void sleepFor(long duration) {
     try {
       Thread.sleep(duration);
     } catch (InterruptedException e) {

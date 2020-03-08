@@ -11,8 +11,9 @@ public class Main {
   private static UltrasonicLocalization usLocalizer;
 
   /**
-   * Main method
-   * @param args
+   * Main method starts up the odometer and LightSensorPoller threads, creates an instance of UltrasonicLocalization 
+   * to localize and starts navigation and search process.
+   * @param args Array of command line params
    */
   public static void main(String[] args) {
     //wait for user button left press
@@ -53,7 +54,8 @@ public class Main {
   
   /**
    * Sleep the program for a given duration of time
-   * @param duration
+   * @param duration to sleep in milliseconds
+   * 
    */
   public static void sleepFor(long duration) {
     try {

@@ -6,8 +6,8 @@ import lejos.hardware.Sound;
 
 
 /**
- * Class containing all methods used to move about the board
- * @author Mustafain & Bruno
+ * Class containing all methods used to navigate ev3 about the board
+ * @author Mustafain, Bruno
  *
  */
 public class Navigation {
@@ -37,7 +37,7 @@ public class Navigation {
   * Calculates the minimum angle needed to correct the robot's heading and turns by that angle.
   * @param theta Target angle to turn to
   */
- private static void turnTo(double theta) {
+ public static void turnTo(double theta) {
    double rotationAngle = theta - odoValues[2];
    rotationAngle = Math.toDegrees(rotationAngle);
    
@@ -59,7 +59,7 @@ public class Navigation {
   * @param x : x-coordinate of grid destination
   * @param y : y-coordinate of grid destination
   */
- private static  void travelTo(double x, double y) {
+ public static  void travelTo(double x, double y) {
    //convert map coordinates to centimetres
     x = x * TILE_SIZE;
     y = y * TILE_SIZE;
@@ -123,7 +123,7 @@ travelTo(UR_X+1,(LL_Y+UR_Y)/2);
   * 
   * @return the filtered distance between the US sensor and an obstacle in cm
   */
- public int readUsDistance() {
+ private int readUsDistance() {
    usSensor.fetchSample(usData, 0);
    // extract from buffer, convert to cm, cast to int, and filter
    return filter((int) (usData[0] * 100.0));
@@ -135,7 +135,7 @@ travelTo(UR_X+1,(LL_Y+UR_Y)/2);
   * @param distance raw distance measured by the sensor in cm
   * @return the filtered distance in cm
   */
- int filter(int distance) {
+ private int filter(int distance) {
    if (distance >= 255 && invalidSampleCount < INVALID_SAMPLE_LIMIT) {
      // bad value, increment the filter value and return the distance remembered from before
      invalidSampleCount++;
@@ -156,7 +156,7 @@ travelTo(UR_X+1,(LL_Y+UR_Y)/2);
   * @param distance the input distance
   * @return the wheel rotations necessary to cover the distance
   */
- public static int convertDistance(double distance) {
+ private static int convertDistance(double distance) {
    return (int) ((180.0 * distance) / (Math.PI * WHEEL_RAD));
  }
 
@@ -167,7 +167,7 @@ travelTo(UR_X+1,(LL_Y+UR_Y)/2);
   * @param angle the input angle
   * @return the wheel rotations necessary to rotate the robot by the angle
   */
- public static int convertAngle(double angle) {
+ private static int convertAngle(double angle) {
    return convertDistance(Math.PI * BASE_WIDTH * angle / 360.0);
  }
 

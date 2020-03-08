@@ -4,7 +4,7 @@ import static ca.mcgill.ecse211.project.Resources.odometer;
 import static ca.mcgill.ecse211.project.Resources.TEXT_LCD;
 import java.text.DecimalFormat;
 
-/*
+/**
  * Class to manage the lcd display on the EV3
  */
 public class Display implements Runnable{

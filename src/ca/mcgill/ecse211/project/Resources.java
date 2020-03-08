@@ -7,7 +7,15 @@ import lejos.hardware.port.MotorPort;
 import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
-
+/**
+ * This class is used to define static resources in one place for easy
+ * access and to avoid cluttering the rest of the
+ * codebase. All resources can be imported at once like this:
+ * 
+ * <p>{@code import static ca.mcgill.ecse211.lab3.Resources.*;}
+ * @author Mustafain, Bruno, Jasper
+ *
+ */
 public class Resources {
   /**
    * The ultrasonic sensor.
@@ -132,12 +140,6 @@ public class Resources {
    */
   public static final int TURN_180 = 178;
 
-  /**
-   * Enum to indicate whether to use falling edge or rising edge localization technique.
-   */
-  public enum edgeType {
-    FallingEdge;
-  }
   
   /**
    * Robot length in centimeters.
