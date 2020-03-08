@@ -6,8 +6,8 @@ import static ca.mcgill.ecse211.project.Resources.leftMotor;
 import static ca.mcgill.ecse211.project.Resources.odometer;
 import static ca.mcgill.ecse211.project.Resources.rightMotor;
 
-/*
- * Used for odometry correction and robot localization using light sensors 
+/**
+ * Class for odometry correction and robot localization using light sensors 
  */
 public class LightLocalization {
 

@@ -1,7 +1,6 @@
 package ca.mcgill.ecse211.project;
 
 import static ca.mcgill.ecse211.project.Resources.*;
-import java.util.ArrayList;
 import lejos.hardware.Sound;
 
 
@@ -34,7 +33,7 @@ public class Navigation {
 
    
  /**
-  * Calculates the minimum angle needed to correct the robot's heading and turns by that angle.
+  * Calculates the minimum angle needed to turn to target angle and turns ev3 by that minimum angle.
   * @param theta Target angle to turn to
   */
  public static void turnTo(double theta) {
