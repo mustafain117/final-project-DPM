@@ -161,10 +161,24 @@ public class Odometer implements Runnable {
     } finally {
       lock.unlock();
     }
-
     return position;
   }
-
+  
+  /**
+   * Returns the x-axis position 
+   * @return the odometer x position
+   */
+  public double getX() {
+    return getXyt()[0];
+  }
+  
+  /**
+   * Returns the y-axis position 
+   * @return the odometer y position
+   */
+  public double getY() {
+    return getXyt()[1];
+  }
   /**
    * Adds dx, dy and dtheta to the current values of x, y and theta, respectively. 
    * Useful for odometry.

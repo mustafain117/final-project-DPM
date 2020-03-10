@@ -25,9 +25,9 @@ public class LightLocalization {
    * 
    * @param turnBy initial angle to turn by to align axle along the line that we want to correct with
    */
-  public static void singleLineCorrection(double turnBy) {
-    Navigation.turnBy(turnBy);
-    Navigation.moveDistFwd(250, 100);
+  public void singleLineCorrection(double turnBy) {
+    NavigatorUtility.turnBy(turnBy);
+    NavigatorUtility.moveDistFwd(250, 100);
     
     while(true) {
       
@@ -35,7 +35,7 @@ public class LightLocalization {
         rightMotor.stop(true);
         leftMotor.stop(true);
         sleepFor(1000);
-        Navigation.moveDistFwd(fow, 100);
+        NavigatorUtility.moveDistFwd(fow, 100);
         break;
       }
       
@@ -52,7 +52,7 @@ public class LightLocalization {
         leftMotor.rotate(-lineThicknessCorrection);
        
         sleepFor(1000);
-        Navigation.moveDistFwd(fow, 100);
+        NavigatorUtility.moveDistFwd(fow, 100);
         break;
       }
       
@@ -68,7 +68,7 @@ public class LightLocalization {
         rightMotor.rotate(-lineThicknessCorrection);
   
         sleepFor(1000);
-        Navigation.moveDistFwd(fow, 100);
+        NavigatorUtility.moveDistFwd(fow, 100);
         break;
       }
      
@@ -85,15 +85,15 @@ public class LightLocalization {
   /**
    * Corrects the ev3 along the y axis, first part of the light correction
    */
-  public static void odoCorrectionFirst(){
+  public  void odoCorrectionFirst(){
     while(true) {
       
       if(LightSensorPoller.getRightColorVal() <=30 && LightSensorPoller.getLeftColorVal()<=30) {
         rightMotor.stop(true);
         leftMotor.stop(true);
         sleepFor(1000);
-        Navigation.moveDistFwd(fow, 100);
-        Navigation.turnBy(90);
+        NavigatorUtility.moveDistFwd(fow, 100);
+        NavigatorUtility.turnBy(90);
         break;
       }
       
@@ -110,8 +110,8 @@ public class LightLocalization {
         leftMotor.rotate(-lineThicknessCorrection);
        
         sleepFor(1000);
-        Navigation.moveDistFwd(fow, 100);
-        Navigation.turnBy(90);
+        NavigatorUtility.moveDistFwd(fow, 100);
+        NavigatorUtility.turnBy(90);
         break;
       }
       
@@ -127,8 +127,8 @@ public class LightLocalization {
         rightMotor.rotate(-lineThicknessCorrection);
   
         sleepFor(1000);
-        Navigation.moveDistFwd(fow, 100);
-        Navigation.turnBy(90);
+        NavigatorUtility.moveDistFwd(fow, 100);
+        NavigatorUtility.turnBy(90);
         break;
       }
      
@@ -144,9 +144,9 @@ public class LightLocalization {
   /**
    * Corrects the ev3 along the x axis, second part of light sensor correction
    */
-  public static void odoCorrectionSecond() {   
+  public void odoCorrectionSecond() {   
     //Go over line to then mov backwards into it
-    Navigation.moveDistFwd(350,100);
+    NavigatorUtility.moveDistFwd(350,100);
     
     while(true) {
       
@@ -155,7 +155,7 @@ public class LightLocalization {
         leftMotor.stop(true);
         //leftMotor.rotate(pullBack);
         sleepFor(1000);
-        Navigation.moveDistFwd(fow, 100);
+        NavigatorUtility.moveDistFwd(fow, 100);
         break;
       }
       
@@ -173,7 +173,7 @@ public class LightLocalization {
         leftMotor.rotate(lineThicknessCorrection);
        
         sleepFor(1000);
-        Navigation.moveDistFwd(fow, 100);
+        NavigatorUtility.moveDistFwd(fow, 100);
         break;
       }
       
@@ -190,7 +190,7 @@ public class LightLocalization {
         rightMotor.rotate(lineThicknessCorrection);
   
         sleepFor(1000);
-        Navigation.moveDistFwd(fow, 100);
+        NavigatorUtility.moveDistFwd(fow, 100);
         break;
       }
      
@@ -208,7 +208,7 @@ public class LightLocalization {
   /**
    * This method updates the odometer coordinates to that of the point the odoCorrection just localized to
    */
-  public static void updateOdometer() {
+  public void updateOdometer() {
     //Correct coordinates
     odometer.setX(closestTile(odometer.getXyt()[0]));
     odometer.setY(closestTile(odometer.getXyt()[1]));
@@ -230,7 +230,7 @@ public class LightLocalization {
    * @param odo thought location by robot
    * @return closestTile
    */
-  private static double closestTile(double odo) {
+  private double closestTile(double odo) {
     int closest= (int)( (odo/TILE_SIZE)+0.5) ;
     return closest*TILE_SIZE;
   }
@@ -239,7 +239,7 @@ public class LightLocalization {
    * Sleep the program for a given duration of time
    * @param duration The sleep duaration in milliseconds
    */
-  private static void sleepFor(long duration) {
+  private void sleepFor(long duration) {
     try {
       Thread.sleep(duration);
     } catch (InterruptedException e) {

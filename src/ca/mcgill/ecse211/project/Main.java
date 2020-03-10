@@ -9,6 +9,7 @@ import static ca.mcgill.ecse211.project.Resources.*;
  */
 public class Main {
   private static UltrasonicLocalization usLocalizer;
+  private static LightLocalization lightLocalizer;
 
   /**
    * Main method starts up the odometer and LightSensorPoller threads, creates an instance of UltrasonicLocalization 
@@ -30,21 +31,25 @@ public class Main {
       
       new Thread(new LightSensorPoller()).start();
       //Traverse the first line (x=1) to use the odo correction method 
-      Navigation.moveDistFwd((int) TILE_SIZE*100/3, 100);
+      lightLocalizer = new LightLocalization();
+      Navigation navigation = new Navigation(lightLocalizer);
+     
+      NavigatorUtility.moveDistFwd((int) TILE_SIZE*100/3, 100);
       
+      lightLocalizer = new LightLocalization();
       //Move to (1,1) using LS correction
-      LightLocalization.odoCorrectionFirst();
+      lightLocalizer.odoCorrectionFirst();
       
     //Traverse the second line (x=1) to use the odo correction method 
-      Navigation.moveDistFwd((int) TILE_SIZE*100/4, 100);
+      NavigatorUtility.moveDistFwd((int) TILE_SIZE*100/4, 100);
 
-      LightLocalization.odoCorrectionSecond();
+      lightLocalizer.odoCorrectionSecond();
       
-      Navigation.turnBy(-90);
+      NavigatorUtility.turnBy(-90);
       odometer.setXyt(TILE_SIZE, TILE_SIZE,0.0);
             
       //navigate tunnel
-      Navigation.navigateTunnel(3, 2, 5, 3);
+      navigation.navigateTunnel(3, 2, 5, 3,"Red ");
       
       //Add search and avoid obstacles
       
