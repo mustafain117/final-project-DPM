@@ -37,7 +37,7 @@ public class Navigation {
   private static double odoValues[] = new double[3];  
 
 /**
- * Constructor for navigation class
+ * Constructor for navigation class, creates a Navigation object
  * @param lsLocalizer instance of LightLocalization class
  */
   public Navigation(LightLocalization lsLocalizer) {

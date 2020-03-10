@@ -10,7 +10,9 @@ import java.text.DecimalFormat;
 public class Display implements Runnable{
   
   volatile boolean exit = false; 
-
+  /**
+   * Displays x, y and theta from Odometer
+   */
   public void run() {
     while (!exit) { // operates continuously
       TEXT_LCD.clear();

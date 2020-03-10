@@ -20,6 +20,12 @@ public class LightLocalization {
   private static int lineThicknessCorrection=0;
  
   /**
+   * Creates a LightLocalization object
+   */
+  public LightLocalization() {
+  }
+  
+  /**
    * Light sensor correction along a single line used before and after the tunnel 
    * to insure straight line travel through said tunnel
    * 

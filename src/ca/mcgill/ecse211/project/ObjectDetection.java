@@ -5,5 +5,5 @@ package ca.mcgill.ecse211.project;
  * @author Mustafain
  */
 public class ObjectDetection {
-
+ 
 }
