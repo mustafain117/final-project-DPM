@@ -8,8 +8,18 @@ import static ca.mcgill.ecse211.project.Resources.*;
  * @author Mustafain , Bruno
  */
 public class Main {
+  /**
+   * Instance of UltrasoncicLocalization Class, used for initial localization
+   */
   private static UltrasonicLocalization usLocalizer;
+  /**
+   *  Instance of LightLocalization Class, used for odometer correction 
+   */
   private static LightLocalization lightLocalizer;
+  /**
+   * Instance of Navigation class, provides acces to methods used for navigation of ev3
+   */
+  private static Navigation navigation;
 
   /**
    * Main method starts up the odometer and LightSensorPoller threads, creates an instance of UltrasonicLocalization 
@@ -32,7 +42,7 @@ public class Main {
       new Thread(new LightSensorPoller()).start();
       //Traverse the first line (x=1) to use the odo correction method 
       lightLocalizer = new LightLocalization();
-      Navigation navigation = new Navigation(lightLocalizer);
+      navigation = new Navigation(lightLocalizer);
      
       NavigatorUtility.moveDistFwd((int) TILE_SIZE*100/3, 100);
       
