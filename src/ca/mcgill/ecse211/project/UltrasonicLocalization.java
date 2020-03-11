@@ -76,7 +76,7 @@ public class UltrasonicLocalization {
       angleA = convertAngle(odometer.getXyt()[2]);
       Sound.beep();
       // turn 90 degrees to avoid error where robot reads the two falling edges on the same wall 
-      turnBy(TURN_90);
+      NavigatorUtility.turnBy(TURN_90);
       // switch direction and face wall
       while (readUsDistance() < WALL_DIST + errorMargin) {
         rotateClockwise();
@@ -194,31 +194,6 @@ public class UltrasonicLocalization {
   }
 
   /**
-   * Converts input angle to the total rotation of each wheel needed to rotate 
-   * the robot by that angle.
-   * 
-   * @param angle the input angle
-   * @return the wheel rotations necessary to rotate the robot by the angle
-   */
-  private int angleToDist(double angle) {
-    return convertDistance(WHEEL_RAD, Math.PI * BASE_WIDTH * angle / 360.0);
-  }
-
-  /**
-   * Turns the robot by a specified angle. Note that this method is different 
-   * from {@code Navigation.turnTo()}. For example, if the robot is facing 90 
-   * degrees, calling {@code turnBy(90)} will make the robot turn to 180 degrees, 
-   * but calling {@code Navigation.turnTo(90)} should do nothing 
-   * (since the robot is already at 90 degrees).
-   * 
-   * @param angle the angle by which to turn, in degrees
-   */
-  public void turnBy(double angle) {
-    leftMotor.rotate(angleToDist(angle), true);
-    rightMotor.rotate(-angleToDist(angle), false);
-  }
-
-  /**
    * Uses the ultrasonic sensor to read the x and y distances that the robot is 
    * from the wall. These distances are used to calculate the distance that the 
    * robot needs to travel to get to (1,1).
@@ -228,15 +203,15 @@ public class UltrasonicLocalization {
   public double[] recordDistances() {
     leftMotor.setSpeed(MOTOR_HIGH); // set left and right motor speeds high
     rightMotor.setSpeed(MOTOR_HIGH);
-    turnBy(TURN_180); // turn robot by 180 degrees
+    NavigatorUtility.turnBy(TURN_180); // turn robot by 180 degrees
     double y;
     double x;
     y = readUsDistance(); // read y distance
     leftMotor.setSpeed(MOTOR_HIGH);
     rightMotor.setSpeed(MOTOR_HIGH);
-    turnBy(TURN_90); // turn robot by 90 degrees
+    NavigatorUtility.turnBy(TURN_90); // turn robot by 90 degrees
     x = readUsDistance(); // read x distance
-    turnBy(TURN_90); // rotate 90 degrees and return to original 0 degree heading
+    NavigatorUtility.turnBy(TURN_90); // rotate 90 degrees and return to original 0 degree heading
     return new double[] {x, y};
   }
 
@@ -253,12 +228,12 @@ public class UltrasonicLocalization {
     leftMotor.rotate(convertDistance(WHEEL_RAD, distY - ROBOT_LENGTH), true);
     rightMotor.rotate(convertDistance(WHEEL_RAD, distY - ROBOT_LENGTH), false);
 
-    turnBy(TURN_90); // rotate by 90 degrees
+    NavigatorUtility.turnBy(TURN_90); // rotate by 90 degrees
 
     leftMotor.rotate(convertDistance(WHEEL_RAD, distX - ROBOT_LENGTH), true);
     rightMotor.rotate(convertDistance(WHEEL_RAD, distX - ROBOT_LENGTH), false);
 
-    turnBy(-TURN_90); // rotate by -90 degrees
+    NavigatorUtility.turnBy(-TURN_90); // rotate by -90 degrees
   }
 
 }

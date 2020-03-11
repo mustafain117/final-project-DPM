@@ -40,10 +40,10 @@ public class LightSensorPoller implements Runnable {
     BLUE, GREEN, YELLOW, ORANGE, NONE;
   }
   
-  /*
+  /**
    * Color detected by the middle color sensor
    */
-  public  COLOUR detectedColour;
+  private  COLOUR detectedColour;
   
   /**
    * Records samples from all three light sensors into colourData, colorRight and colorLeft arrays. Calls {@code updateDetectedColour} to continuously update the color detected by middle color sensor.
@@ -99,7 +99,8 @@ public class LightSensorPoller implements Runnable {
   }
   
   /**
-   * Characterises the color detected by the color sensor
+   * Characterises the color detected by the color sensor and the {@code detectedColor} variable which can be accessed 
+   * using the {@code getColor} method.
    * @param colourRed Normalized red value from color sensor
    * @param colourGreen Normalized green value from color sensor
    * @param colourBlue Normalized blue value from color sensor
