@@ -35,15 +35,16 @@ public class Main {
     if(buttonChoice != Button.ID_ESCAPE) {
       // start the odometer
       new Thread(odometer).start();
-      
+      new Thread(new Display()).start();
       usLocalizer = new UltrasonicLocalization();
       usLocalizer.doLocalization();
-      
+  
       new Thread(new LightSensorPoller()).start();
       //Traverse the first line (x=1) to use the odo correction method 
       lightLocalizer = new LightLocalization();
       navigation = new Navigation(lightLocalizer);
      
+      
       NavigatorUtility.moveDistFwd((int) TILE_SIZE*100/3, 100);
       
       lightLocalizer = new LightLocalization();
@@ -57,9 +58,9 @@ public class Main {
       
       NavigatorUtility.turnBy(-90);
       odometer.setXyt(TILE_SIZE, TILE_SIZE,0.0);
-            
+
       //navigate tunnel
-      navigation.navigateTunnel(3, 2, 5, 3,"Red ");
+      navigation.navigateTunnel(2, 2, 3, 4,"Green");
       
       //Add search and avoid obstacles
       

@@ -5,13 +5,14 @@ import lejos.hardware.Sound;
 
 
 /**
- * Class containing all methods used to navigate ev3 about the board
+ * Class containing all methods used to navigate ev3 about the board, 
+ * uses an instance of {@code LightLocalization} class to incorporate odometery correction.
  * @author Mustafain, Bruno
  *
  */
 public class Navigation {
   /**
-   * The distance remembered by the {@code filter()} method.
+   * The distance remembered by the {@code filter()} method. 
    */
   private int prevDistance;
   
@@ -32,7 +33,7 @@ public class Navigation {
   private static float[] usData = new float[usSensor.sampleSize()];
   
   /**
-   * array to hold odometer x, y, theta values
+   * Array to hold odometer x, y, theta values
    */
   private static double odoValues[] = new double[3];  
 
@@ -45,7 +46,9 @@ public class Navigation {
   }
    
  /**
-  * Calculates the minimum angle needed to turn to target angle and turns ev3 by that minimum angle.
+  * Calculates the minimum rotation angle needed to turn to target angle and turns ev3 by that minimum angle. 
+  * The rotation angle is calculated by subtracting the current odometer angle from {@code theta} and ensuring that the rotation angle is below 180 degrees. 
+  * Uses {@code NavigatorUtitlity} to convert rotation angle to total rotation of each wheel and rotates each wheel by that amount.
   * @param theta Target angle to turn to
   */
  public  void turnTo(double theta) {
@@ -66,7 +69,8 @@ public class Navigation {
  }
  
  /**
-  * Moves the robot to provided grid coordinate
+  * Moves the robot to provided grid coordinate. Calculates the distance to move and the angle to turn to using the provided grid coordinates 
+  * and the current odometer values. Keeps moving the robot until travelled distance is less than the calculated distance.
   * @param x : x-coordinate of grid destination
   * @param y : y-coordinate of grid destination
   */
@@ -108,7 +112,10 @@ public class Navigation {
  }
  
  /**
-  * navigates the robot across a tunnel and stops 1 tile after leaving tunnel end
+  * Navigates the robot across a tunnel and stops either at {@code (UR_X+1,(LL_Y+UR_Y)/2)} if tunnel is parallel to orgin x axis
+  *  at {@code ((LL_X+UR_X)/2, UR_Y + 1)} if tunnel is parallel to y-axis. Uses {@code travelTo} to position the robot perpendicular to 
+  * the tunnel opening. Uses {@code LightLocalization} to ensure heading of robot enters tunnel at the correct heading.  
+  * Uses {@code travelTo} to move in a straight line through the tunnel and move 1 tile after leaving the tunnel.
   * @param LL_X the x coordinate of the lower left point of the tunnel
   * @param LL_Y the y coordinate of the lower left point of the tunnel
   * @param UR_X the x coordinate of the upper right point of the tunnel

@@ -24,7 +24,6 @@ public class Resources {
   /**
    * The light sensor used for colour ring detection
    */
-  
   public static final EV3ColorSensor lightSensor = new EV3ColorSensor(SensorPort.S4);
   
   /** The right Light Sensor sensor. */
@@ -186,4 +185,5 @@ public class Resources {
    * Orange standard deviation RGB values
    */
   public static final double[] ORANGE_SD = {0.005720356, 0.001136768, 0.001012523};
+  
 }

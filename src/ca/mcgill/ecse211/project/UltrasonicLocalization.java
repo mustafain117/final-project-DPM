@@ -10,11 +10,6 @@ import lejos.hardware.Sound;
 public class UltrasonicLocalization {
 
   /**
-   * Float array to hold the data returned by the light sensor.
-   */
-  private static float[] lightValue = new float[lightSensor.sampleSize()];
-
-  /**
    * The distance remembered by the {@code filter()} method.
    */
   private int prevDistance;
@@ -166,8 +161,7 @@ public class UltrasonicLocalization {
 
   /**
    * Rotates the robot in the counter-clockwise direction by turning 
-   * the left motor backward and the right motor
-   * forward.
+   * the left motor backward and the right motor forward.
    */
   private void rotateAntiClockwise() {
     leftMotor.backward();

@@ -86,7 +86,9 @@ public class Odometer implements Runnable {
   }
 
   /**
-   * This method is where the logic for the odometer will run.
+   * This method is where the logic for the odometer will run. 
+   * <p>It estimates the left and right wheel displacements using tachometer counts. 
+   * The change in angle is then calculated using these estimated displacements using the wheel base and wheel radius of the robot.
    */
   public void run() {
     
