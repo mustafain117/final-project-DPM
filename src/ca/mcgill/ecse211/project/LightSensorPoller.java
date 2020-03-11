@@ -13,7 +13,8 @@ import static ca.mcgill.ecse211.project.Resources.colorSensorRight;
 import static ca.mcgill.ecse211.project.Resources.lightSensor;
 
 /**
-  * Runs as a thread to collect samples from all three light sensors and characterises colour detected by middle color sensor 
+  * Runs as a thread to collect samples from all three light sensors and characterises colour detected by middle color sensor. Used by
+  * {@code LightLocalization} for the Odometer correction process.
   * @author Mustafain 
   *
   */
@@ -46,7 +47,8 @@ public class LightSensorPoller implements Runnable {
   private  COLOUR detectedColour;
   
   /**
-   * Records samples from all three light sensors into colourData, colorRight and colorLeft arrays. Calls {@code updateDetectedColour} to continuously update the color detected by middle color sensor.
+   * Records samples from all three light sensors into colourData, colorRight and colorLeft arrays.
+   * Calls {@code updateDetectedColour} to continuously update the color detected by middle color sensor.
    */
   public void run() {
     long updateStart;
