@@ -47,8 +47,9 @@ public class Navigation {
    
  /**
   * Calculates the minimum rotation angle needed to turn to target angle and turns ev3 by that minimum angle. 
-  * The rotation angle is calculated by subtracting the current odometer angle from {@code theta} and ensuring that the rotation angle is below 180 degrees. 
-  * Uses {@code NavigatorUtitlity} to convert rotation angle to total rotation of each wheel and rotates each wheel by that amount.
+  * The rotation angle is calculated by subtracting the current odometer angle from {@code theta} and ensuring 
+  * that the rotation angle is below 180 degrees. Uses {@code NavigatorUtitlity} to convert rotation angle to total
+  *  rotation of each wheel and rotates each wheel by that amount.
   * @param theta Target angle to turn to
   */
  public  void turnTo(double theta) {
@@ -69,8 +70,8 @@ public class Navigation {
  }
  
  /**
-  * Moves the robot to provided grid coordinate. Calculates the distance to move and the angle to turn to using the provided grid coordinates 
-  * and the current odometer values. Keeps moving the robot until travelled distance is less than the calculated distance.
+  * Moves the robot to provided grid coordinate. Calculates the distance to move and the angle to turn to using the provided 
+  * grid coordinates and the current odometer values. Keeps moving the robot until travelled distance is less than the calculated distance.
   * @param x : x-coordinate of grid destination
   * @param y : y-coordinate of grid destination
   */

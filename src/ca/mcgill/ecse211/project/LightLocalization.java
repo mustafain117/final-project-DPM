@@ -12,12 +12,12 @@ import static ca.mcgill.ecse211.project.Resources.rightMotor;
 public class LightLocalization {
 
   //Distance between sensors and front axel
-  private static int fow=150;
+  private int fow=150;
   //Pull Back on the wheel to clear the line to ensure consistent trials
-  private static int pullBack=-50;
+  private int pullBack=-50;
   
   //Testing parameter for shifting the final orientation
-  private static int lineThicknessCorrection=0;
+  private int lineThicknessCorrection=0;
  
   /**
    * Creates a LightLocalization object
