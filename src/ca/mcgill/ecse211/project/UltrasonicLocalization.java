@@ -47,7 +47,8 @@ public class UltrasonicLocalization {
   }
 
   /**
-   * Performs localization process based on falling edge technique, localizes the heading to 0 degrees
+   * Performs localization process based on falling edge technique, localizes the heading to 0 degrees. Uses the ultrasonice sensor
+   * to detect the edges of the wall and uses odometer theta values to calculate angle to turn to in order to localize heading to 0 degrees.
    */
   public void doLocalization() {
     double angleA;  // angle to first falling edge
