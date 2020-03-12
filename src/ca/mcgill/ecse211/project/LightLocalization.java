@@ -7,7 +7,10 @@ import static ca.mcgill.ecse211.project.Resources.odometer;
 import static ca.mcgill.ecse211.project.Resources.rightMotor;
 
 /**
- * Class for odometry correction and robot localization using light sensors.
+ *This class will provide methods to perform odometer correction using light sensors which are sampled by the LightSensorPoller thread. 
+ *In order to correct the robot’s position, this class will provide methods to localize at different waypoints using two light sensors. 
+ *The odoCorrectionFirst method corrects the robots' position along the y-axis. 
+ *The odoCorrectionSecond method corrects the robots’ position along the x-axis
  */
 public class LightLocalization {
 
@@ -27,7 +30,8 @@ public class LightLocalization {
   
   /**
    * Light sensor correction along a single line used before and after the tunnel 
-   * to insure straight line travel through said tunnel
+   * to ensure straight line travel through said tunnel. Uses static methods from
+   * {@code NavigatorUtility} class
    * 
    * @param turnBy initial angle to turn by to align axle along the line that we want to correct with
    */
@@ -89,7 +93,9 @@ public class LightLocalization {
   }
   
   /**
-   * Corrects the ev3 along the y axis, first part of the light correction
+   * Corrects the ev3 along the y axis, first part of the light correction. Uses the two light sensors to detect line perpendicular
+   * to y-axis and aligns both wheels along this line
+   * Uses static methods from {@code NavigatorUtility} class
    */
   public  void odoCorrectionFirst(){
     while(true) {
@@ -148,7 +154,8 @@ public class LightLocalization {
     }
   }
   /**
-   * Corrects the ev3 along the x axis, second part of light sensor correction
+   * Corrects the ev3 along the x axis, second part of light sensor correction. Uses the two light sensors to detect line perpendicular
+   * to x-axis and aligns both wheels along this line. Uses static methods from {@code NavigatorUtility} class
    */
   public void odoCorrectionSecond() {   
     //Go over line to then mov backwards into it
