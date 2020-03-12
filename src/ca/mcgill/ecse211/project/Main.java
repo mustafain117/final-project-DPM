@@ -7,7 +7,8 @@ import static ca.mcgill.ecse211.project.Resources.*;
  * Main class to launch the program and acts as controller. Creates a {@code UltarsonicLocalization} object which 
  * provides methods to localize to (1,1) relative to starting position on the grid. Starts the {@code Odometer} thread and the {@code Display} thread.
  * After initial localization, the {@code LightSensorPoller} thread is started and an {@code LightLocalization} object is created which is used for 
- * correction of the odomter. An instance of the {@code Navigation} class is then created to start of the navigation process.
+ * correction of the odometer. An instance of the {@code Navigation} class is then created to start of the navigation process. When the tunnel 
+ * navigation is done, an instance of {@code ObjectDetection} class is created which provides methods for the search process.
  *
  * @author Mustafain , Bruno
  */

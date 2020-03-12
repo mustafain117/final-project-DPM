@@ -138,6 +138,14 @@ public class ObjectDetection {
   }
 
   /**
+   * This method is used to detect the axle of the stranded vehicle using the color detected by the color sensor from the LightSensorPoller thread.
+   * It is called when a vehicle is detected, this method orients the claw to be in line with the axle. The {@code RobotClaw} class is then used to 
+   * attach the vehicle to the robot. 
+   */
+  public void towVehicle() {
+  }
+  
+  /**
    * Reads the ultrasonic sensor distance and calls the filter method.
    * 
    * @return filtered distance value read by ultrasonic sensor
