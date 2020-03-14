@@ -7,7 +7,10 @@ import static ca.mcgill.ecse211.project.Resources.odometer;
 import static ca.mcgill.ecse211.project.Resources.rightMotor;
 
 /**
- * Class for odometry correction and robot localization using light sensors.
+ *This class will provide methods to perform odometer correction using light sensors which are sampled by the LightSensorPoller thread. 
+ *In order to correct the robot’s position, this class will provide methods to localize at different waypoints using two light sensors. 
+ *The odoCorrectionFirst method corrects the robots' position along the y-axis. 
+ *The odoCorrectionSecond method corrects the robots’ position along the x-axis
  */
 public class LightLocalization {
 
@@ -27,7 +30,8 @@ public class LightLocalization {
   
   /**
    * Light sensor correction along a single line used before and after the tunnel 
-   * to insure straight line travel through said tunnel
+   * to ensure straight line travel through said tunnel. Uses static methods from
+   * {@code NavigatorUtility} class
    * 
    * @param turnBy initial angle to turn by to align axle along the line that we want to correct with
    */
@@ -87,6 +91,7 @@ public class LightLocalization {
       }
     }
   }
+  
   
   /**
    * Corrects the ev3 along the  the axis the robot is closest too. This is the first part of the light correction of 
@@ -150,6 +155,7 @@ public class LightLocalization {
       }
     }
   }
+  
   /**
    * Corrects the ev3 along the  the second axis. This is the second part of the light correction of 
    * the odometer.The robot drives backwards until one or both of the light sensors cross a line, from this it 
