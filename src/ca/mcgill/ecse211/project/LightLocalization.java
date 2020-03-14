@@ -89,7 +89,10 @@ public class LightLocalization {
   }
   
   /**
-   * Corrects the ev3 along the y axis, first part of the light correction
+   * Corrects the ev3 along the  the axis the robot is closest too. This is the first part of the light correction of 
+   * the odometer.The robot drives backwards until one or both of the light sensors cross a line, from this it aligns itself along
+   * the line and turns 90 degrees clockwise.
+   * 
    */
   public  void odoCorrectionFirst(){
     while(true) {
@@ -148,7 +151,9 @@ public class LightLocalization {
     }
   }
   /**
-   * Corrects the ev3 along the x axis, second part of light sensor correction
+   * Corrects the ev3 along the  the second axis. This is the second part of the light correction of 
+   * the odometer.The robot drives backwards until one or both of the light sensors cross a line, from this it 
+   * aligns itself along the line. The robot now sits centered above a point on the grid.
    */
   public void odoCorrectionSecond() {   
     //Go over line to then mov backwards into it
@@ -212,7 +217,8 @@ public class LightLocalization {
   }
  
   /**
-   * This method updates the odometer coordinates to that of the point the odoCorrection just localized to
+   * This method updates the odometer coordinates to that of the point the odoCorrection just localized to. It sets it
+   * to the point to which the robot thinks it is currently closest too
    */
   public void updateOdometer() {
     //Correct coordinates
@@ -252,4 +258,5 @@ public class LightLocalization {
       // There is nothing to be done here
     }
   }
+  
 }

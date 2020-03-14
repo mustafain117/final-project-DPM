@@ -43,8 +43,8 @@ public class NavigatorUtility {
    * @param angle the angle by which to turn, in degrees
    */
   public static void turnBy(double angle) {
-    leftMotor.setSpeed(150);
-    rightMotor.setSpeed(150);
+    leftMotor.setSpeed(100);
+    rightMotor.setSpeed(100);
     leftMotor.rotate(convertAngle(angle), true);
     rightMotor.rotate(-convertAngle(angle), false);
   }
@@ -57,7 +57,7 @@ public class NavigatorUtility {
    * @param speed the speed in deg/s
    */
   public static void moveDistFwd(int distance, int speed) {
-   int rotationAngle = (int) (distance * DEG_PER_RAD / 100); // Convert linear distance to turns
+   int rotationAngle = (int) (distance * Resources.DIST_TO_DEG / 100); // Convert linear distance to turns
     leftMotor.setSpeed(speed); // Roll both motors forward
     rightMotor.setSpeed(speed);
     leftMotor.rotate(rotationAngle, true); // Rotate left motor - DO NOT BLOCK

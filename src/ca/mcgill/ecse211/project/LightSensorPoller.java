@@ -1,16 +1,7 @@
 package ca.mcgill.ecse211.project;
 
-import static ca.mcgill.ecse211.project.Resources.BLUE_MEAN;
-import static ca.mcgill.ecse211.project.Resources.BLUE_SD;
-import static ca.mcgill.ecse211.project.Resources.GREEN_MEAN;
-import static ca.mcgill.ecse211.project.Resources.GREEN_SD;
-import static ca.mcgill.ecse211.project.Resources.ORANGE_MEAN;
-import static ca.mcgill.ecse211.project.Resources.ORANGE_SD;
-import static ca.mcgill.ecse211.project.Resources.YELLOW_MEAN;
-import static ca.mcgill.ecse211.project.Resources.YELLOW_SD;
-import  static ca.mcgill.ecse211.project.Resources.colorSensorLeft;
-import static ca.mcgill.ecse211.project.Resources.colorSensorRight;
-import static ca.mcgill.ecse211.project.Resources.lightSensor;
+import static ca.mcgill.ecse211.project.Resources.*;
+
 
 /**
   * Runs as a thread to collect samples from all three light sensors and characterises colour detected by middle color sensor. Used by
@@ -38,13 +29,13 @@ public class LightSensorPoller implements Runnable {
    * Possible color types detected by color sensor
    */
   public enum COLOUR {
-    BLUE, GREEN, YELLOW, ORANGE, NONE;
+    BLUE, GREEN, YELLOW, ORANGE, WALL, NONE;
   }
   
   /**
    * Color detected by the middle color sensor
    */
-  private  COLOUR detectedColour;
+  private static COLOUR detectedColour;
   
   /**
    * Records samples from all three light sensors into colourData, colorRight and colorLeft arrays.
@@ -107,12 +98,16 @@ public class LightSensorPoller implements Runnable {
    * @param colourGreen Normalized green value from color sensor
    * @param colourBlue Normalized blue value from color sensor
    */
-  public  void updateDetectedColour(double colourRed, double colourGreen, double colourBlue) {
-    this.detectedColour  = COLOUR.NONE;
-    
+  public static void updateDetectedColour(double colourRed, double colourGreen, double colourBlue) {
+    detectedColour  = COLOUR.NONE;
+    colourRED=colourRed;
+    colourGREEN=colourGreen;
+    colourBLUE=colourBlue;
     int stdDevs = 40;
     //for orange and yellow;
     int stDevsOY = 30;
+    //for wall
+    int wallStDEV=2;
     
     if ((colourBlue >= GREEN_MEAN[2] - stdDevs* GREEN_SD[2]) & (colourBlue <= GREEN_MEAN[2] + stdDevs*GREEN_SD[2])) {
 
@@ -120,7 +115,7 @@ public class LightSensorPoller implements Runnable {
 
         if ((colourGreen >= GREEN_MEAN[1] - stdDevs*GREEN_SD[1]) & (colourGreen <= GREEN_MEAN[1] +stdDevs* GREEN_SD[1])) {
 
-          this.detectedColour = COLOUR.GREEN;
+          detectedColour = COLOUR.GREEN;
         }
       }
     } 
@@ -131,7 +126,7 @@ public class LightSensorPoller implements Runnable {
 
         if ((colourGreen >= BLUE_MEAN[1] - stdDevs*BLUE_SD[1]) && (colourGreen <= BLUE_MEAN[1] +stdDevs* BLUE_SD[1])) {
 
-          this.detectedColour = COLOUR.BLUE;
+          detectedColour = COLOUR.BLUE;
         }
       }
     } 
@@ -143,7 +138,7 @@ public class LightSensorPoller implements Runnable {
 
         if ((colourGreen >= YELLOW_MEAN[1] - stDevsOY*YELLOW_SD[1]) && (colourGreen <= YELLOW_MEAN[1] +stDevsOY* YELLOW_SD[1])) {
 
-          this.detectedColour = COLOUR.YELLOW;
+          detectedColour = COLOUR.YELLOW;
         }
       }
 
@@ -154,16 +149,43 @@ public class LightSensorPoller implements Runnable {
 
         if ((colourGreen >= ORANGE_MEAN[1] - stdDevs*ORANGE_SD[1]) && (colourGreen <= ORANGE_MEAN[1] + stdDevs*ORANGE_SD[1])) {
 
-          this.detectedColour = COLOUR.ORANGE;
+          detectedColour = COLOUR.ORANGE;
         }
       }
     }
+    
+    if ((colourBlue >= WALL_MEAN[2] - wallStDEV*WALL_SD[2]) && (colourBlue <= WALL_MEAN[2] + wallStDEV*WALL_SD[2])) {
+
+      if ((colourRed >= WALL_MEAN[0] - wallStDEV*WALL_SD[0]) && (colourRed <= WALL_MEAN[0] + wallStDEV*WALL_SD[0])) {
+
+        if ((colourGreen >= WALL_MEAN[1] - wallStDEV*WALL_SD[1]) && (colourGreen <= WALL_MEAN[1] +wallStDEV* WALL_SD[1])) {
+
+          detectedColour = COLOUR.WALL;
+        }
+      }
+
+    }  
   }
 /**
  * getter for color detected by color sensor
  * @return the COLOUR type detected (GREEN, BLUE, ORANGE, YELLOW, NONE)
  */
-  public COLOUR getColor() {
-    return this.detectedColour;
+  public static COLOUR getColor() {
+    return detectedColour;
+    
+  }
+  
+  
+  private static double colourRED;
+  private static double colourGREEN;
+  private static double colourBLUE;
+  
+  /**
+   * Tester for the colorvals, to calibrate for the wall and cart recognizing
+   */
+  public static double[] tester() {
+    double[] RGB = {colourRED,colourGREEN,colourBLUE};
+    return RGB;
+    
   }
 }

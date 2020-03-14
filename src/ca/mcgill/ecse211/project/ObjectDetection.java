@@ -3,10 +3,12 @@ package ca.mcgill.ecse211.project;
 import static ca.mcgill.ecse211.project.Resources.INVALID_SAMPLE_LIMIT;
 import static ca.mcgill.ecse211.project.Resources.MOTOR_LOW;
 import static ca.mcgill.ecse211.project.Resources.TILE_SIZE;
+import static ca.mcgill.ecse211.project.Resources.TURN_90;
 import static ca.mcgill.ecse211.project.Resources.leftMotor;
 import static ca.mcgill.ecse211.project.Resources.odometer;
 import static ca.mcgill.ecse211.project.Resources.rightMotor;
 import static ca.mcgill.ecse211.project.Resources.usSensor;
+import ca.mcgill.ecse211.project.LightSensorPoller.COLOUR;
 import lejos.hardware.Sound;
 
 /**
@@ -34,26 +36,32 @@ public class ObjectDetection {
   /**
    * The distance remembered by the {@code filter()} method.
    */
-  private int prevDistance;
+  private  int prevDistance;
 
   /**
    * Field for instance of navigation class
    */
-  private Navigation navigation;
+  private  Navigation navigation;
 
   /**
    *  Instance of RobotClaw class;
    */
-  private RobotClaw claw;
+  private  RobotClaw claw;
+  
+  /**
+   * usLocalizer used in main
+   */
+  private UltrasonicLocalization usLoc;
 
   /**
    * Constructor for ObjectDetection Class
    * @param navigation : Instance of Navigation Class
    * @param claw : object representing the claw of the robot
    */
-  public ObjectDetection(Navigation navigation, RobotClaw claw) {
+  public  ObjectDetection(UltrasonicLocalization us, Navigation navigation, RobotClaw claw) {
     this.navigation = navigation;
     this.claw = claw;
+    this.usLoc =us;
   }
   
  /**
@@ -66,8 +74,32 @@ public class ObjectDetection {
   * @param SZ_UR_X the upper right x coordinate of the assigned search zone
   * @param SZ_UR_Y the upper right y coordinate of the assigned search zone
   */
-  public void searchVehicle(double SZ_LL_X, double SZ_LL_Y, double SZ_UR_X, double SZ_UR_Y) {
+  public  void searchVehicle(double SZ_LL_X, double SZ_LL_Y, double SZ_UR_X, double SZ_UR_Y) {
     
+    (new Thread() {
+      public void run() {
+        double[] distances=usLoc.recordDistances();
+        NavigatorUtility.turnBy(180); // rotate 90 degrees and return to original 0 degree heading
+        System.out.println(distances[1]);
+        NavigatorUtility.moveDistFwd( (int)((distances[1]-8)*100), 200);
+        
+        Main.sleepFor(1000);
+        if(LightSensorPoller.getColor()!=COLOUR.WALL) {
+          Resources.mediumRegulatedMotor.rotate(-70);
+          NavigatorUtility.moveDistFwd( (int) (-(TILE_SIZE)*100/3), 200);
+          NavigatorUtility.turnBy(180); // rotate 90 degrees and return to original 0 degree heading
+          NavigatorUtility.moveDistFwd( (int) (-(TILE_SIZE)*100/3), 200);
+          Resources.mediumRegulatedMotor.rotate(70);
+      
+          NavigatorUtility.moveDistFwd((int) TILE_SIZE*100, 100);
+        }
+        else {
+          System.exit(0);
+        }
+        
+      }
+    }).start();
+    //TODO 
   }
   
   /**
@@ -133,7 +165,7 @@ public class ObjectDetection {
    * @return true if obstacle is detected, false otherwise.
    */
   private boolean isObstacle() {
-    // TODO Auto-generated method stub
+    // TODO 
     return false;
   }
 
@@ -143,6 +175,7 @@ public class ObjectDetection {
    * attach the vehicle to the robot. 
    */
   public void towVehicle() {
+    //TODO
   }
   
   /**

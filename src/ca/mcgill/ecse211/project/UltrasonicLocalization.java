@@ -123,7 +123,7 @@ public class UltrasonicLocalization {
    * 
    * @return filtered distance value read by ultrasonic sensor
    */
-  private int readUsDistance() {
+  public int readUsDistance() {
     usSensor.fetchSample(usData, 0);
     // extract from buffer, convert to cm, cast to int, and filter
     return filter((int) (usData[0] * 100.0)); // *100 for cm instead of m
@@ -135,7 +135,7 @@ public class UltrasonicLocalization {
    * @param distance raw distance measured by the sensor in cm
    * @return the filtered distance in cm
    */
-  private int filter(int distance) {
+  public int filter(int distance) {
     if (distance >= 255 && invalidSampleCount < INVALID_SAMPLE_LIMIT) {
       // bad value, increment the filter value and return the distance remembered from before
       invalidSampleCount++;

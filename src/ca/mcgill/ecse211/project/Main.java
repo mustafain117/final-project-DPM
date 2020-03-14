@@ -2,6 +2,7 @@ package ca.mcgill.ecse211.project;
 
 import lejos.hardware.Button;
 import static ca.mcgill.ecse211.project.Resources.*;
+import ca.mcgill.ecse211.project.LightSensorPoller.COLOUR;
 
 /**
  * Main class to launch the program and acts as controller. Creates a {@code UltarsonicLocalization} object which 
@@ -37,12 +38,12 @@ public class Main {
     int buttonChoice;
     buttonChoice = Button.waitForAnyPress();
     
-    if(buttonChoice != Button.ID_ESCAPE) {
+    if(buttonChoice == Button.ID_ENTER) {
       // start the odometer
       new Thread(odometer).start();
       new Thread(new Display()).start();
-      usLocalizer = new UltrasonicLocalization();
-      usLocalizer.doLocalization();
+      //usLocalizer = new UltrasonicLocalization();
+      //usLocalizer.doLocalization();
   
       new Thread(new LightSensorPoller()).start();
       //Traverse the first line (x=1) to use the odo correction method 
@@ -53,15 +54,20 @@ public class Main {
       NavigatorUtility.moveDistFwd((int) TILE_SIZE*100/3, 100);
       
       lightLocalizer = new LightLocalization();
+      
+      mediumRegulatedMotor.rotate(-70);
+
+      mediumRegulatedMotor.rotate(70);
       //Move to (1,1) using LS correction
       lightLocalizer.odoCorrectionFirst();
       
-    //Traverse the second line (x=1) to use the odo correction method 
+      //Traverse the second line (x=1) to use the odo correction method 
       NavigatorUtility.moveDistFwd((int) TILE_SIZE*100/4, 100);
 
       lightLocalizer.odoCorrectionSecond();
-      
-      NavigatorUtility.turnBy(-90);
+      sleepFor(3000);
+
+      NavigatorUtility.turnBy(270);
       odometer.setXyt(TILE_SIZE, TILE_SIZE,0.0);
 
       //navigate tunnel
@@ -70,6 +76,34 @@ public class Main {
       //Add search and avoid obstacles
       
        sleepFor(1000);
+    }
+    //Turning for testing
+    if(buttonChoice==Button.ID_LEFT) {
+     
+      /**
+       * Test code for claw:
+      
+          //mediumRegulatedMotor.rotate(-70);
+
+          //mediumRegulatedMotor.rotate(70);
+      
+          //NavigatorUtility.moveDistFwd((int) TILE_SIZE*100, 100);
+           * 
+       */
+      
+     
+      lightLocalizer = new LightLocalization();
+      navigation = new Navigation(lightLocalizer);
+      usLocalizer = new UltrasonicLocalization();
+      new Thread(new LightSensorPoller()).start();
+      
+      RobotClaw claw=new RobotClaw();
+      
+      ObjectDetection detector= new ObjectDetection(usLocalizer, navigation,claw);
+      detector.searchVehicle(2, 2, 2, 2);
+      
+     
+      
     }
   }
   

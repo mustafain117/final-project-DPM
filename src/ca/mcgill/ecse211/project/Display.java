@@ -18,15 +18,24 @@ public class Display implements Runnable{
       TEXT_LCD.clear();
 
          
+      
+      /**
+        
       // Retrieve x, y and Theta information
-      double[] position = odometer.getXyt();
-      position[2] = (position[2] * 180.0 / 3.14159);
-
+      //double[] position = odometer.getXyt();
+      //position[2] = (position[2] * 180.0 / 3.14159);
+      
+       */
+      
+      //Retrieve colors
+      double[] position =LightSensorPoller.tester();
+      
+      
       // Print x,y,theta, and angle information
       DecimalFormat numberFormat = new DecimalFormat("######0.00");
-      TEXT_LCD.drawString("X: " + numberFormat.format(position[0]), 0, 2);
-      TEXT_LCD.drawString("Y: " + numberFormat.format(position[1]), 0, 3);
-      TEXT_LCD.drawString("T: " + numberFormat.format(position[2]), 0, 4);
+      TEXT_LCD.drawString("R: " + numberFormat.format(position[0]), 0, 2);
+      TEXT_LCD.drawString("G: " + numberFormat.format(position[1]), 0, 3);
+      TEXT_LCD.drawString("B: " + numberFormat.format(position[2]), 0, 4);
       
       try {
         Thread.sleep(1000);

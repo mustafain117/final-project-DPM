@@ -75,7 +75,7 @@ public class Navigation {
   * @param x : x-coordinate of grid destination
   * @param y : y-coordinate of grid destination
   */
- public void travelTo(double x, double y) {
+ public void travelTo(double x, double y, int speed) {
    //convert map coordinates to centimetres
     x = x * TILE_SIZE;
     y = y * TILE_SIZE;
@@ -98,8 +98,8 @@ public class Navigation {
     double distanceTravelled = 0;
     
     while( distanceTravelled <= hypotenuse ) {
-      leftMotor.setSpeed(MOTOR_LOW);
-      rightMotor.setSpeed(MOTOR_LOW);
+      leftMotor.setSpeed(speed);
+      rightMotor.setSpeed(speed);
       rightMotor.forward();
       leftMotor.forward();
       
@@ -130,9 +130,9 @@ double currX = odometer.getX();
 
 if(team .equals("Red")){ //red team
   if( Math.abs(UR_Y * TILE_SIZE - currY) < Math.abs(LL_Y * TILE_SIZE  - currY)){
-    travelTo(LL_X-1, UR_Y);
+    travelTo(LL_X-1, UR_Y,MOTOR_LOW);
    }else {
-    travelTo(LL_X-1, LL_Y);
+    travelTo(LL_X-1, LL_Y,MOTOR_LOW);
    }
   double currAngle = odometer.getAngle();
   currAngle = (currAngle * 180.0 / 3.14159);
@@ -140,16 +140,18 @@ if(team .equals("Red")){ //red team
   //moveStraightFor(0.25);
   lightLocalizer.odoCorrectionFirst();
   lightLocalizer.odoCorrectionSecond();
-  travelTo(LL_X-1, (LL_Y+UR_Y)/2);
-  travelTo(UR_X+1,(LL_Y+UR_Y)/2);
+  travelTo(LL_X-1, (LL_Y+UR_Y)/2, MOTOR_LOW);
+  lightLocalizer.singleLineCorrection(90);
+  travelTo(UR_X+1,(LL_Y+UR_Y)/2,350);
   }else { //green team
-    travelTo(UR_X, LL_Y-1);
+    travelTo(UR_X, LL_Y-1,MOTOR_LOW);
     double currAngle = odometer.getAngle();
     NavigatorUtility.turnBy(-1*currAngle);
     lightLocalizer.odoCorrectionFirst();
     lightLocalizer.odoCorrectionSecond();
-    travelTo((LL_X+UR_X)/2, LL_Y-1);
-    travelTo((LL_X+UR_X)/2, UR_Y + 1);
+    travelTo((LL_X+UR_X)/2, LL_Y-1,MOTOR_LOW);
+    lightLocalizer.singleLineCorrection(90);
+    travelTo((LL_X+UR_X)/2, UR_Y + 1,350);
   }
 }
 

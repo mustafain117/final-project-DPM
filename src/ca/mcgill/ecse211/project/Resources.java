@@ -24,13 +24,13 @@ public class Resources {
   /**
    * The light sensor used for colour ring detection
    */
-  public static final EV3ColorSensor lightSensor = new EV3ColorSensor(SensorPort.S4);
+  public static final EV3ColorSensor lightSensor = new EV3ColorSensor(SensorPort.S3);
   
   /** The right Light Sensor sensor. */
-  public static final EV3ColorSensor colorSensorRight=new EV3ColorSensor(SensorPort.S2);
+  public static final EV3ColorSensor colorSensorRight=new EV3ColorSensor(SensorPort.S4);
   
   /** The left Light Sensor sensor. */
-  public static final EV3ColorSensor colorSensorLeft=new EV3ColorSensor(SensorPort.S3);
+  public static final EV3ColorSensor colorSensorLeft=new EV3ColorSensor(SensorPort.S2);
 
   /**
    * The left motor.
@@ -41,6 +41,11 @@ public class Resources {
    * The right motor.
    */
   public static final EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(MotorPort.B);
+  /**
+   * The motor used for the claw
+   */
+  public static final EV3LargeRegulatedMotor mediumRegulatedMotor = new EV3LargeRegulatedMotor(MotorPort.C);
+
   /**
    * The LCD screen used for displaying text.
    */
@@ -58,7 +63,7 @@ public class Resources {
   /**
    * The robot width in centimeters.
    */
-  public static final double BASE_WIDTH = 15.29;
+  public static final double BASE_WIDTH = 16.03;
   /**
    * Speed of slower rotating wheel (deg/sec). Used during ultrasonic
    * localization.
@@ -102,6 +107,10 @@ public class Resources {
   /** The number of degrees in one radian (180/PI). */
   public static final double DEG_PER_RAD = 57.2598;
   
+  /** Constant for odometer conversion
+   * 360/(2xPixRw)  Rw=2.8cm    (20). */
+  static final int DIST_TO_DEG = 27;
+  
   /**
    * Lower angle to subtract the averaged angles measured during the 
    * falling edge localization process.
@@ -144,7 +153,12 @@ public class Resources {
    * Robot length in centimeters.
    */
   public static final double ROBOT_LENGTH = 4.6; 
-//******** COLOR RESOURCES ***********
+  
+/*************************************
+ *                                   *
+ *      COLOR RESOURCES              *
+ *                                   *
+ **************************************/
   
   /**
    * Blue mean RGB values
@@ -185,5 +199,15 @@ public class Resources {
    * Orange standard deviation RGB values
    */
   public static final double[] ORANGE_SD = {0.005720356, 0.001136768, 0.001012523};
+  
+  /**
+   * Orange mean RGB values
+   */
+  public static final double[] WALL_MEAN = {0.63625, 0.635, 0.431875};
+  
+  /**
+   * Orange standard deviation RGB values
+   */
+  public static final double[] WALL_SD = {0.04910872, 0.03425395, 0.0549204};
   
 }

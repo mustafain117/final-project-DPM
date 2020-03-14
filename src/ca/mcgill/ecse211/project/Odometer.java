@@ -127,7 +127,7 @@ public class Odometer implements Runnable {
   /**
    * Gets the tacho count for each motor.
    * 
-   * @return arr Array containing the tacho count for left and right motors.
+   * @return the array containing the tacho count for left and right motors.
    */
   public int[] getTachos() {
     int[] arr = new int[2];
