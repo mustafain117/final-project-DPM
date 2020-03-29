@@ -61,7 +61,19 @@ public class Resources {
   public static final double WHEEL_RAD = 2.130;
 
   /**
+   * The distance between the US sensor and the front of the vehicle 
+   */
+  public static final double US_OFFSET=8;
+  /**
    * The robot width in centimeters.
+   */
+  /**
+   * The angle of rotation for the claw to open
+   */
+  public static final int CLAW_ANGLE= 70;
+  
+  /**
+   * The base width of the car
    */
   public static final double BASE_WIDTH = 16.03;
   /**

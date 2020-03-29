@@ -38,6 +38,12 @@ public class Main {
     int buttonChoice;
     buttonChoice = Button.waitForAnyPress();
     
+    /*
+     * 
+     * Press ENTER to start the full code from start to finish
+     * 
+     */
+    
     if(buttonChoice == Button.ID_ENTER) {
       // start the odometer
       new Thread(odometer).start();
@@ -77,21 +83,13 @@ public class Main {
       
        sleepFor(1000);
     }
-    //Turning for testing
+    /*
+     * 
+     * Press LEFT to start the testing code
+     * 
+     */
     if(buttonChoice==Button.ID_LEFT) {
-     
-      /**
-       * Test code for claw:
-      
-          //mediumRegulatedMotor.rotate(-70);
-
-          //mediumRegulatedMotor.rotate(70);
-      
-          //NavigatorUtility.moveDistFwd((int) TILE_SIZE*100, 100);
-           * 
-       */
-      
-     
+      //Basic initializations
       lightLocalizer = new LightLocalization();
       navigation = new Navigation(lightLocalizer);
       usLocalizer = new UltrasonicLocalization();
@@ -99,11 +97,9 @@ public class Main {
       
       RobotClaw claw=new RobotClaw();
       
+      //Launch tester for vehicle retrieval
       ObjectDetection detector= new ObjectDetection(usLocalizer, navigation,claw);
       detector.searchVehicle(2, 2, 2, 2);
-      
-     
-      
     }
   }
   

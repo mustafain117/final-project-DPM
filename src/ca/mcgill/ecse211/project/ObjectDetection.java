@@ -1,13 +1,6 @@
 package ca.mcgill.ecse211.project;
 
-import static ca.mcgill.ecse211.project.Resources.INVALID_SAMPLE_LIMIT;
-import static ca.mcgill.ecse211.project.Resources.MOTOR_LOW;
-import static ca.mcgill.ecse211.project.Resources.TILE_SIZE;
-import static ca.mcgill.ecse211.project.Resources.TURN_90;
-import static ca.mcgill.ecse211.project.Resources.leftMotor;
-import static ca.mcgill.ecse211.project.Resources.odometer;
-import static ca.mcgill.ecse211.project.Resources.rightMotor;
-import static ca.mcgill.ecse211.project.Resources.usSensor;
+import static ca.mcgill.ecse211.project.Resources.*;
 import ca.mcgill.ecse211.project.LightSensorPoller.COLOUR;
 import lejos.hardware.Sound;
 
@@ -79,20 +72,21 @@ public class ObjectDetection {
     (new Thread() {
       public void run() {
         double[] distances=usLoc.recordDistances();
-        NavigatorUtility.turnBy(180); // rotate 90 degrees and return to original 0 degree heading
         System.out.println(distances[1]);
-        NavigatorUtility.moveDistFwd( (int)((distances[1]-8)*100), 200);
-        
+        NavigatorUtility.moveDistFwd( (int)((distances[1]-US_OFFSET)*100), 200); 
         Main.sleepFor(1000);
+        
+        //If looking at the cart
         if(LightSensorPoller.getColor()!=COLOUR.WALL) {
-          Resources.mediumRegulatedMotor.rotate(-70);
+          Resources.mediumRegulatedMotor.rotate(-CLAW_ANGLE);
           NavigatorUtility.moveDistFwd( (int) (-(TILE_SIZE)*100/3), 200);
           NavigatorUtility.turnBy(180); // rotate 90 degrees and return to original 0 degree heading
           NavigatorUtility.moveDistFwd( (int) (-(TILE_SIZE)*100/3), 200);
-          Resources.mediumRegulatedMotor.rotate(70);
+          Resources.mediumRegulatedMotor.rotate(CLAW_ANGLE);
       
           NavigatorUtility.moveDistFwd((int) TILE_SIZE*100, 100);
         }
+        //If looking at a wall
         else {
           System.exit(0);
         }

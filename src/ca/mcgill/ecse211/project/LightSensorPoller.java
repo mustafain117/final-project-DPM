@@ -176,6 +176,12 @@ public class LightSensorPoller implements Runnable {
   }
   
   
+  /****************************************
+   * 
+   * TESTING FEATURES
+   * 
+   ****************************************
+   */
   private static double colourRED;
   private static double colourGREEN;
   private static double colourBLUE;
