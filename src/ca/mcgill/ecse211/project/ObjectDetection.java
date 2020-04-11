@@ -1,6 +1,8 @@
 package ca.mcgill.ecse211.project;
 
 import static ca.mcgill.ecse211.project.Resources.*;
+import ca.mcgill.ecse211.playingfield.Point;
+import ca.mcgill.ecse211.playingfield.Region;
 import ca.mcgill.ecse211.project.LightSensorPoller.COLOUR;
 import lejos.hardware.Sound;
 
@@ -12,7 +14,7 @@ import lejos.hardware.Sound;
   * In case of the vehicle, the {@code towVehicle} method is called to attach the vehicle to the claw.
  * @author Mustafain
  */
-public class ObjectDetection {
+public class ObjectDetection implements Runnable {
   
   private static final int SAFE_DIST = 5;
 
@@ -45,16 +47,49 @@ public class ObjectDetection {
    * usLocalizer used in main
    */
   private UltrasonicLocalization usLoc;
+  
+  /**
+   * light localizer used in main
+   */
+  private LightLocalization lightLoc;
+  /**
+   * Coordinates of Tunnel entrance (the center of the line in front of the entrance
+   */
+  double tunX;
+  double tunY;
+  double tunTheta;
+  /**
+   * 
+   * Search zone parameters
+   */
+  private double SZ_LL_X;
+  private double SZ_LL_Y;
+  private double SZ_UR_X;
+  private double SZ_UR_Y;
+  
+  /**
+   * current direction, used to avoid obstacles
+   * 1 is +y, 2 is +x, 3 is -y, 4 is -x
+   */
+  
+  private int currDirection;
+  /**
+   * Grid next location parameters
+   */
+  private double nextX;
+  private double nextY;
 
   /**
    * Constructor for ObjectDetection Class
    * @param navigation : Instance of Navigation Class
    * @param claw : object representing the claw of the robot
    */
-  public  ObjectDetection(UltrasonicLocalization us, Navigation navigation, RobotClaw claw) {
+  public  ObjectDetection(UltrasonicLocalization us, Navigation navigation, RobotClaw claw,LightLocalization lightloc) {
     this.navigation = navigation;
     this.claw = claw;
     this.usLoc =us;
+    this.lightLoc=lightloc;
+    
   }
   
  /**
@@ -67,48 +102,267 @@ public class ObjectDetection {
   * @param SZ_UR_X the upper right x coordinate of the assigned search zone
   * @param SZ_UR_Y the upper right y coordinate of the assigned search zone
   */
-  public  void searchVehicle(double SZ_LL_X, double SZ_LL_Y, double SZ_UR_X, double SZ_UR_Y) {
+  public void searchVehicle(double SZ_LL_X, double SZ_LL_Y, double SZ_UR_X, double SZ_UR_Y) {
+    //convert coordinates to centimeter values
+    this.SZ_LL_X=SZ_LL_X*TILE_SIZE;
+    this.SZ_LL_Y=SZ_LL_Y*TILE_SIZE;
+    this.SZ_UR_X=SZ_UR_X*TILE_SIZE;
+    this.SZ_UR_Y=SZ_UR_Y*TILE_SIZE;
+    
+    //Since this method is run after line localization is done at the exit of the tunnel we can note down the coordinates of the entrance
+    tunX=odometer.getXyt()[0];
+    tunY=odometer.getXyt()[1];
+    tunTheta=odometer.getXyt()[2];
+    run();
+  }
+  
+  /**
+   * This thread runs the vehicle search algorithm. It is the thread used for navigating in a grid. It does so through visiting each tile one by one through the center.
+   * This thread is interrupted by the detectObject thread when an object is detected
+   * 
+   * @author Bruno
+   */
+  public void run() {
+                
+    //assumes the robot is aligned along the first line after the tunnel and no object can be in that tile
+    Region island=Resources.island;
+    Point IL_LL=island.ll;
+    Point IL_UR=island.ur;
+    
+    int startCorner; //Clockwise from UL =1 to LL =4
+    double closestCornerX;
+    double closestCornerY;
+    double currX=odometer.getX();
+    double currY=odometer.getY();
+    
+    //Finding the closest corner of the search zone to the robot's location
+    
+    if(Math.abs(SZ_LL_X-currX)< Math.abs(SZ_UR_X-currX)) {
+      closestCornerX=SZ_LL_X;
+      startCorner=4;
+    }
+    else {
+      closestCornerX=SZ_UR_X;
+      startCorner=2;
+    }
+    
+    if(Math.abs(SZ_LL_Y-currY)< Math.abs(SZ_UR_Y-currY)) {
+      closestCornerY=SZ_LL_Y;
+      if(startCorner==2) {startCorner=1;}
+    }
+    else {
+      closestCornerY=SZ_UR_Y;
+      if(startCorner==4) {startCorner=3;}
+    }
+    
+    //Correcting the position in case its on the edge of the search zone 
+    closestCornerX=(closestCornerX==IL_LL.x)? closestCornerX + 0.5*TILE_SIZE : closestCornerX;
+    closestCornerX=(closestCornerX==IL_UR.x)? closestCornerX - 0.5*TILE_SIZE : closestCornerX;
+    
+    closestCornerY=(closestCornerY==IL_LL.y)? closestCornerY + 0.5*TILE_SIZE : closestCornerY;
+    closestCornerY=(closestCornerY==IL_UR.y)? closestCornerY - 0.5*TILE_SIZE : closestCornerY;
+    
+    //Start object detection
+    detectObject(Thread.currentThread());
+    
+    moveToWaypoint(closestCornerX,closestCornerY);
+    
+    /*
+      To simplify the search procedure, make the robot over to the UL corner before starting grid movement
+      This decreases the number of possible permutations of grid movement
+     */
+    
+    if(startCorner==2) {
+      moveToWaypoint(SZ_LL_X+TILE_SIZE,SZ_UR_Y);//move to UL tile edge 
+      lightLoc.singleLineCorrection(0); // Localize
+      moveToWaypoint(SZ_LL_X+0.5*TILE_SIZE,SZ_UR_Y);//Move to middle of UL tile
+    }
+    if(startCorner==3) {
+      moveToWaypoint(SZ_UR_X-0.5*TILE_SIZE,SZ_UR_Y-0.5*TILE_SIZE); //move to UR corner, middle of Tile
+      
+      moveToWaypoint(SZ_LL_X+TILE_SIZE,SZ_UR_Y);
+      lightLoc.singleLineCorrection(0);
+      moveToWaypoint(SZ_LL_X+0.5*TILE_SIZE,SZ_UR_Y);
+    }
+    if(startCorner==4) {
+      moveToWaypoint(SZ_LL_X,SZ_UR_Y-TILE_SIZE);//move to UL tile edge 
+      lightLoc.singleLineCorrection(0); // Localize
+      moveToWaypoint(SZ_LL_X,SZ_UR_Y-0.5*TILE_SIZE);//Move to middle of UL tile
+    }
+    
+    /*
+      While loop sequentially makes robot go through the middle of each tile in the search zone
+      The robot stops at each line it crosses and does single line localization
+      It proceeds from the UL corner down to the LL corner and the goes through each column 
+      until it reaches either the UR o LR corner
+     */
+     nextX=SZ_LL_X+0.5*TILE_SIZE;
+     nextY=SZ_UR_Y-TILE_SIZE;
+    
+    while(true) {
+      while(nextY!=SZ_LL_Y) {
+        moveToWaypoint(nextX,nextY);
+        lightLoc.singleLineCorrection(0);
+        nextY-=TILE_SIZE;
+      }
+      
+      //move down to mid last tile 
+      nextY+=0.5*TILE_SIZE;
+      moveToWaypoint(nextX,nextY);
+      
+      //If robot isn't in bottom right corner, Move to next x line to localize and the move to middle of next top tile
+      if(nextX+0.5*TILE_SIZE==SZ_UR_X) {
+        break;
+      }
+      //Move to next x line to localize and the move to middle of next bottom tile
+      nextX+=0.5*TILE_SIZE;
+      moveToWaypoint(nextX,nextY);
+      lightLoc.singleLineCorrection(0);
+      nextX+=0.5*TILE_SIZE;
+      moveToWaypoint(nextX,nextY);
+      
+      //Move up to top of search zone
+      nextY+=0.5*TILE_SIZE;
+      while(nextY!=SZ_UR_Y) {
+        moveToWaypoint(nextX,nextY);
+        lightLoc.singleLineCorrection(0);
+        nextY+=TILE_SIZE;
+      }
+      
+      nextY+=0.5*TILE_SIZE;
+      moveToWaypoint(nextX,nextY);
+      
+      //If robot isn't in top right corner, Move to next x line to localize and the move to middle of next top tile
+      if(nextX+0.5*TILE_SIZE==SZ_UR_X) {
+        break;
+      }
+      nextX+=0.5*TILE_SIZE;
+      moveToWaypoint(nextX,nextY);
+      lightLoc.singleLineCorrection(0);
+      nextX+=0.5*TILE_SIZE;
+      moveToWaypoint(nextX,nextY);
+    
+    }
+      
+    
+  }
+  
+  private void detectObject(final Thread trd){
     
     (new Thread() {
       public void run() {
-        double[] distances=usLoc.recordDistances();
-        System.out.println(distances[1]);
-        NavigatorUtility.moveDistFwd( (int)((distances[1]-US_OFFSET)*100), 200); 
-        Main.sleepFor(1000);
-        
-        //If looking at the cart
-        if(LightSensorPoller.getColor()!=COLOUR.WALL) {
-          Resources.mediumRegulatedMotor.rotate(-CLAW_ANGLE);
-          NavigatorUtility.moveDistFwd( (int) (-(TILE_SIZE)*100/3), 200);
-          NavigatorUtility.turnBy(180); // rotate 90 degrees and return to original 0 degree heading
-          NavigatorUtility.moveDistFwd( (int) (-(TILE_SIZE)*100/3), 200);
-          Resources.mediumRegulatedMotor.rotate(CLAW_ANGLE);
-      
-          NavigatorUtility.moveDistFwd((int) TILE_SIZE*100, 100);
+        //Due to the set up of the grid search algorithm we can assume the robot will never be under 5cm from the map wall
+        while(true) {
+          int dist=readUsDistance();
+          if(dist<SAFE_DIST) {
+            if(!isObstacle()) {
+              towVehicle();
+              //go back to tunnel entrance
+               detectObject(Thread.currentThread());// run detector in order to evade obstacles on the way to the tunnel
+               moveToWaypoint(odometer.getXyt()[0],tunY);
+               moveToWaypoint(tunX,tunY);
+               navigation.turnTo(tunTheta);
+               NavigatorUtility.turnBy(180);
+            }
+            else {
+                //Pause the thread calling object detection so that the obstacle can be avoided
+              
+                //If thread  was passed from recursive call ofdetectObject
+                if (trd!=null) {try {
+                  trd.wait();
+                } catch (InterruptedException e) {
+                  //Ignore
+                }}
+                  
+                avoidObstacle();
+                //Re-activate the calling thread
+                trd.notify();
+            }
+          }
         }
-        //If looking at a wall
-        else {
-          System.exit(0);
-        }
-        
       }
     }).start();
-    //TODO 
   }
+  
+  
   
   /**
    * This method is called when an obstacle is detected. It avoids the obstacle by moving around the obstacle from the left or right directions
    * depending on the current position of the robot and the search zone boundary.
    */
   public void avoidObstacle() {
+    //Position of robot
+    double[] odoValues = odometer.getXyt();
+    double currX =odoValues[0]; 
+    double currY =odoValues[1];
+    
+    if(currDirection==1) {
+      
+      if(Math.abs(currX-SZ_LL_X)>TILE_SIZE) { //is there a tile in SZ to the left 
+        //then go to left tile to avoid obstacle
+        moveToWaypoint(currX-TILE_SIZE,currY);
+        moveToWaypoint(currX-TILE_SIZE,currY+2*TILE_SIZE);
+        moveToWaypoint(currX,currY+2*TILE_SIZE);
+      }
+      else {
+      //then go to right tile to avoid obstacle
+        moveToWaypoint(currX+TILE_SIZE,currY);
+        moveToWaypoint(currX+TILE_SIZE,currY+2*TILE_SIZE);
+        moveToWaypoint(currX,currY+2*TILE_SIZE);
+      }
+      nextY+=2*TILE_SIZE; //update next grid location
+    }
+    if(currDirection==3) {
+      if(Math.abs(currX-SZ_LL_X)>TILE_SIZE) { //is there a tile in SZ to the left 
+        //then go to left tile to avoid obstacle
+        moveToWaypoint(currX-TILE_SIZE,currY);
+        moveToWaypoint(currX-TILE_SIZE,currY-2*TILE_SIZE);
+        moveToWaypoint(currX,currY-2*TILE_SIZE);
+      }
+      else {
+      //then go to right tile to avoid obstacle
+        moveToWaypoint(currX+TILE_SIZE,currY);
+        moveToWaypoint(currX+TILE_SIZE,currY-2*TILE_SIZE);
+        moveToWaypoint(currX,currY-2*TILE_SIZE);
+      }
+      nextY-=2*TILE_SIZE; //update next grid location
+    }
+    
+    if(currDirection==2) {
+      if(Math.abs(currY-SZ_UR_Y)>TILE_SIZE) { //is there a tile in SZ to the left 
+        //then go to the tile above to avoid obstacle
+        moveToWaypoint(currX,currY+TILE_SIZE);
+        moveToWaypoint(currX+2*TILE_SIZE,currY+TILE_SIZE);
+        moveToWaypoint(currX+2*TILE_SIZE,currY);
+      }
+      else {
+      //then go to the tile below to avoid obstacle
+        moveToWaypoint(currX,currY-TILE_SIZE);
+        moveToWaypoint(currX+2*TILE_SIZE,currY-TILE_SIZE);
+        moveToWaypoint(currX+2*TILE_SIZE,currY);
+      }
+      nextX+=2*TILE_SIZE; //update next grid location
+    }
+    if(currDirection==4) {
+      if(Math.abs(currY-SZ_UR_Y)>TILE_SIZE) { //is there a tile in SZ to the left 
+        //then go to the tile above to avoid obstacle
+        moveToWaypoint(currX,currY+TILE_SIZE);
+        moveToWaypoint(currX-2*TILE_SIZE,currY+TILE_SIZE);
+        moveToWaypoint(currX-2*TILE_SIZE,currY);
+      }
+      else {
+      //then go to the tile below to avoid obstacle
+        moveToWaypoint(currX,currY-TILE_SIZE);
+        moveToWaypoint(currX-2*TILE_SIZE,currY-TILE_SIZE);
+        moveToWaypoint(currX-2*TILE_SIZE,currY);
+      }
+      nextX-=2*TILE_SIZE; //update next grid location
+    }
     
   }
   
   public void moveToWaypoint(double x , double y) {
-  //convert map coordinates to centimetres
-    x = x * TILE_SIZE;
-    y = y * TILE_SIZE;
-    
+  
     double[] odoValues = odometer.getXyt();
     //subtracting odometer  x and y values to estimate x and y distance needed
     double distX = x - odoValues[0]; 
@@ -159,17 +413,28 @@ public class ObjectDetection {
    * @return true if obstacle is detected, false otherwise.
    */
   private boolean isObstacle() {
-    // TODO 
-    return false;
+    
+    //If looking at the cart
+    if(LightSensorPoller.getColor()!=COLOUR.WALL) {
+      Resources.mediumRegulatedMotor.rotate(-CLAW_ANGLE);
+      return false;
+    }
+    //If looking at a wall
+    else {
+      return true;
+    }
   }
 
   /**
-   * This method is used to detect the axle of the stranded vehicle using the color detected by the color sensor from the LightSensorPoller thread.
-   * It is called when a vehicle is detected, this method orients the claw to be in line with the axle. The {@code RobotClaw} class is then used to 
+   * This method is called when a vehicle is detected, this method orients the claw to be in line with the axle. The {@code RobotClaw} class is then used to 
    * attach the vehicle to the robot. 
    */
   public void towVehicle() {
-    //TODO
+    Resources.mediumRegulatedMotor.rotate(-CLAW_ANGLE); //Open claw
+    NavigatorUtility.moveDistFwd( (int) (-(TILE_SIZE)*100/3), 200); //move backwards to give space for turn
+    NavigatorUtility.turnBy(180); // rotate 180 to have claw face object
+    NavigatorUtility.moveDistFwd( (int) (-(TILE_SIZE)*100/3), 200);  //move onto object
+    Resources.mediumRegulatedMotor.rotate(CLAW_ANGLE); // close claw
   }
   
   /**

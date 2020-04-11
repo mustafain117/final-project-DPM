@@ -6,7 +6,7 @@ import lejos.hardware.Sound;
 
 /**
  * Class containing all methods used to navigate ev3 about the board, 
- * uses an instance of {@code LightLocalization} class to incorporate odometery correction.
+ * uses an instance of {@link LightLocalization} class to incorporate odometery correction.
  * @author Mustafain, Bruno
  *
  */
@@ -74,6 +74,7 @@ public class Navigation {
   * grid coordinates and the current odometer values. Keeps moving the robot until travelled distance is less than the calculated distance.
   * @param x : x-coordinate of grid destination
   * @param y : y-coordinate of grid destination
+  * @param speed : speed to use while travelling
   */
  public void travelTo(double x, double y, int speed) {
    //convert map coordinates to centimetres

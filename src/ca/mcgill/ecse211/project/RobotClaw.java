@@ -1,5 +1,6 @@
 package ca.mcgill.ecse211.project;
-
+import static ca.mcgill.ecse211.project.Resources.mediumRegulatedMotor;
+import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
 /**
  * This class is used to control the claw of the robot used for the rescue process of the vehicle, it is implemented as singleton to ensure only
@@ -13,11 +14,14 @@ public class RobotClaw {
 
   
   private static RobotClaw claw;
-  
+  /**
+   * motor controlling the claw
+   */
+  private EV3LargeRegulatedMotor clawMotor = mediumRegulatedMotor;
   /**
    *  It cannot be accessed externally.
    */
-  public RobotClaw() {
+  private RobotClaw() {
     //TODO
   }
 

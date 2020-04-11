@@ -2,7 +2,6 @@ package ca.mcgill.ecse211.project;
 
 import lejos.hardware.Button;
 import static ca.mcgill.ecse211.project.Resources.*;
-import ca.mcgill.ecse211.project.LightSensorPoller.COLOUR;
 
 /**
  * Main class to launch the program and acts as controller. Creates a {@code UltarsonicLocalization} object which 
@@ -45,61 +44,38 @@ public class Main {
      */
     
     if(buttonChoice == Button.ID_ENTER) {
-      // start the odometer
+      // Setup 
       new Thread(odometer).start();
       new Thread(new Display()).start();
-      //usLocalizer = new UltrasonicLocalization();
-      //usLocalizer.doLocalization();
-  
       new Thread(new LightSensorPoller()).start();
-      //Traverse the first line (x=1) to use the odo correction method 
       lightLocalizer = new LightLocalization();
       navigation = new Navigation(lightLocalizer);
-     
       
-      NavigatorUtility.moveDistFwd((int) TILE_SIZE*100/3, 100);
       
-      lightLocalizer = new LightLocalization();
-      
-      mediumRegulatedMotor.rotate(-70);
-
-      mediumRegulatedMotor.rotate(70);
+      //Start US localization
+      usLocalizer = new UltrasonicLocalization();
+      usLocalizer.doLocalization();
+    
       //Move to (1,1) using LS correction
-      lightLocalizer.odoCorrectionFirst();
+      lightLocalizer.initialLocalizationUsingLS();
       
-      //Traverse the second line (x=1) to use the odo correction method 
-      NavigatorUtility.moveDistFwd((int) TILE_SIZE*100/4, 100);
-
-      lightLocalizer.odoCorrectionSecond();
-      sleepFor(3000);
-
-      NavigatorUtility.turnBy(270);
+      //Set Initial bearings
+      // TODO depending on what corner is started in, different initial positions and bearings must be set
       odometer.setXyt(TILE_SIZE, TILE_SIZE,0.0);
 
       //navigate tunnel
-      navigation.navigateTunnel(2, 2, 3, 4,"Green");
+      //TODO determine tunnel paramters depending on starting position
+      navigation.navigateTunnel(tnr.ll.x, tnr.ll.y, tnr.ur.x, tnr.ur.y,"Red");
       
       //Add search and avoid obstacles
+      RobotClaw claw=RobotClaw.getClaw();
+      ObjectDetection detector= new ObjectDetection(usLocalizer,navigation,claw, lightLocalizer);
+      //TODO determine paramters depending on wifi paramteters
+      detector.searchVehicle(szr.ll.x, szr.ll.y, szr.ur.x, szr.ur.y);
       
-       sleepFor(1000);
-    }
-    /*
-     * 
-     * Press LEFT to start the testing code
-     * 
-     */
-    if(buttonChoice==Button.ID_LEFT) {
-      //Basic initializations
-      lightLocalizer = new LightLocalization();
-      navigation = new Navigation(lightLocalizer);
-      usLocalizer = new UltrasonicLocalization();
-      new Thread(new LightSensorPoller()).start();
       
-      RobotClaw claw=new RobotClaw();
+      //TODO return to start,assume the search vehicle terminates with the robot backat the same place it started (in front of tunnel)
       
-      //Launch tester for vehicle retrieval
-      ObjectDetection detector= new ObjectDetection(usLocalizer, navigation,claw);
-      detector.searchVehicle(2, 2, 2, 2);
     }
   }
   

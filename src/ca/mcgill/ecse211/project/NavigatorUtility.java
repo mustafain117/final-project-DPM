@@ -7,7 +7,7 @@ import static ca.mcgill.ecse211.project.Resources.leftMotor;
 import static ca.mcgill.ecse211.project.Resources.rightMotor;
 
 /**
- * Helper class with static methods used by {@code Navigation}, {@link LightLocalization} and {@link UltrasonicLocalization} classes.
+ * Helper class with static methods used by {@link Navigation}, {@link LightLocalization} and {@link UltrasonicLocalization} classes.
  * @author Mustafain, Bruno
  *
  */

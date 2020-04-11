@@ -5,7 +5,7 @@ import static ca.mcgill.ecse211.project.Resources.*;
 
 /**
   * Runs as a thread to collect samples from all three light sensors and characterises colour detected by middle color sensor. Used by
-  * {@code LightLocalization} for the Odometer correction process.
+  * {@link LightLocalization} for the Odometer correction process.
   * @author Mustafain 
   *
   */

@@ -7,7 +7,7 @@ import static ca.mcgill.ecse211.project.Resources.odometer;
 import static ca.mcgill.ecse211.project.Resources.rightMotor;
 
 /**
- *This class will provide methods to perform odometer correction using light sensors which are sampled by the LightSensorPoller thread. 
+ *This class will provide methods to perform odometer correction using light sensors which are sampled by the {@link LightSensorPoller} thread. 
  *In order to correct the robot’s position, this class will provide methods to localize at different waypoints using two light sensors. 
  *The odoCorrectionFirst method corrects the robots' position along the y-axis. 
  *The odoCorrectionSecond method corrects the robots’ position along the x-axis
@@ -26,6 +26,30 @@ public class LightLocalization {
    * Creates a LightLocalization object
    */
   public LightLocalization() {
+  }
+  
+  /**
+   * Initial LS localization to (1,1) after US localization
+   * 
+   */
+  public void initialLocalizationUsingLS() {
+      
+      //Move past first line 
+      NavigatorUtility.moveDistFwd((int) TILE_SIZE*100/3, 100);
+
+      
+      odoCorrectionFirst();
+      
+      //Traverse the second line (x=1) to use the odo correction method 
+      NavigatorUtility.moveDistFwd((int) TILE_SIZE*100/4, 100);
+
+      odoCorrectionSecond();
+      
+      sleepFor(3000);
+      
+      //Rotate back to suitable bearing
+      
+      NavigatorUtility.turnBy(270);
   }
   
   /**
