@@ -45,17 +45,18 @@ public class Odometer implements Runnable {
    */
   private Condition doneResetting = lock.newCondition();
 
-  /*
-   * static odometer returned by getOdometer
+  /**
+   * Static odometer returned by @code{getOdometer}.
    */
   private static Odometer odo; // Returned as singleton
 
-  /*
-   * to record latest tachometer count from left motor
+  /**
+   * To record latest tachometer count from left motor.
    */
   private static int leftMotorTachoCount = 0;
-  /*
-   * to record latest tachometer count from right motor
+  
+  /**
+   * To record latest tachometer count from right motor.
    */
   private static int rightMotorTachoCount = 0;
 

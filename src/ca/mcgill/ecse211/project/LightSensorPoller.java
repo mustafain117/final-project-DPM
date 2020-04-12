@@ -24,9 +24,9 @@ import static ca.mcgill.ecse211.project.Resources.lightSensor;
  * @author Mustafain
  */
 public class LightSensorPoller implements Runnable {
-/**
- * Sleep duration for thread
- */
+  /**
+   * Sleep duration for thread.
+   */
   private static final long PERIOD = 1000;
 
   /**
@@ -106,7 +106,7 @@ public class LightSensorPoller implements Runnable {
    * @return scaled sample from right color sensor
    */
   public static int getRightColorVal() {
-	 //scaled by 100
+    // scaled by 100 to make values easier to read on LCD
     return (int) (colorRight[0] * 100);
   }
 
@@ -116,7 +116,7 @@ public class LightSensorPoller implements Runnable {
    * @return scaled sample from left color sensor
    */
   public static int getLeftColorVal() {
-	//scaled by 100
+    // scaled by 100 to make values easier to read on LCD
     return (int) (colorLeft[0] * 100);
   }
 
