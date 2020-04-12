@@ -1,13 +1,11 @@
 package ca.mcgill.ecse211.project;
 
 import static ca.mcgill.ecse211.project.Resources.CLAW_ANGLE;
-import static ca.mcgill.ecse211.project.Resources.INVALID_SAMPLE_LIMIT;
 import static ca.mcgill.ecse211.project.Resources.MOTOR_LOW;
 import static ca.mcgill.ecse211.project.Resources.TILE_SIZE;
 import static ca.mcgill.ecse211.project.Resources.leftMotor;
 import static ca.mcgill.ecse211.project.Resources.odometer;
 import static ca.mcgill.ecse211.project.Resources.rightMotor;
-import static ca.mcgill.ecse211.project.Resources.usSensor;
 
 import ca.mcgill.ecse211.playingfield.Point;
 import ca.mcgill.ecse211.playingfield.Region;
@@ -32,20 +30,6 @@ public class ObjectDetection implements Runnable {
 
   private static final int SAFE_DIST = 5;
 
-  /**
-   * The number of invalid samples seen by {@code filter()} so far.
-   */
-  private int invalidSampleCount;
-
-  /**
-   * Array to contain the data returned by reading the ultrasonic sensor.
-   */
-  private float[] usData = new float[usSensor.sampleSize()];
-
-  /**
-   * The distance remembered by the {@code filter()} method.
-   */
-  private int prevDistance;
 
   /**
    * Field for instance of navigation class.
@@ -285,7 +269,7 @@ public class ObjectDetection implements Runnable {
         // Due to the set up of the grid search algorithm we can 
         // assume the robot will never be under 5 cm from the map wall
         while (true) {
-          int dist = readUsDistance();
+          int dist = usLoc.readUsDistance();
           if (dist < SAFE_DIST) {
             if (!isObstacle()) {
               towVehicle();
@@ -423,7 +407,7 @@ public class ObjectDetection implements Runnable {
       rightMotor.forward();
       leftMotor.forward();
 
-      if (readUsDistance() < SAFE_DIST) {
+      if (usLoc.readUsDistance() < SAFE_DIST) {
         rightMotor.stop(true);
         leftMotor.stop(true);
         Sound.beep();
@@ -472,8 +456,7 @@ public class ObjectDetection implements Runnable {
    */
   public void towVehicle() {
     // Open claw
-    Resources.mediumRegulatedMotor.rotate(-CLAW_ANGLE); 
-    
+	  claw.openClaw();
     // move backwards to give space for turn
     NavigatorUtility.moveDistFwd((int) (-(TILE_SIZE) * 100 / 3), 200); 
     
@@ -484,40 +467,7 @@ public class ObjectDetection implements Runnable {
     NavigatorUtility.moveDistFwd((int) (-(TILE_SIZE) * 100 / 3), 200);
     
     // close claw
-    Resources.mediumRegulatedMotor.rotate(CLAW_ANGLE); 
+    claw.closeClaw();
   }
 
-  /**
-   * Reads the ultrasonic sensor distance and calls the filter method.
-   * 
-   * @return filtered distance value read by ultrasonic sensor
-   */
-  private int readUsDistance() {
-    usSensor.fetchSample(usData, 0);
-    
-    // extract from buffer, convert to cm, cast to int, and filter
-    return filter((int) (usData[0] * 100.0)); // *100 for cm instead of m
-  }
-
-  /**
-   * Rudimentary filter - toss out invalid samples corresponding to null signal.
-   * 
-   * @param distance raw distance measured by the sensor in cm
-   * @return the filtered distance in cm
-   */
-  private int filter(int distance) {
-    if (distance >= 255 && invalidSampleCount < INVALID_SAMPLE_LIMIT) {
-      // bad value, increment the filter value and return the distance remembered from before
-      invalidSampleCount++;
-      return prevDistance;
-    } else {
-      if (distance < 255) {
-        // distance went below 255: reset filter and remember the input distance.
-        invalidSampleCount = 0;
-        // minDistance = Math.min(minDistance, distance);
-      }
-      prevDistance = distance;
-      return distance;
-    }
-  }
 }

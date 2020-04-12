@@ -1,14 +1,11 @@
 package ca.mcgill.ecse211.project;
 
-import static ca.mcgill.ecse211.project.Resources.INVALID_SAMPLE_LIMIT;
 import static ca.mcgill.ecse211.project.Resources.MOTOR_LOW;
 import static ca.mcgill.ecse211.project.Resources.TILE_SIZE;
 import static ca.mcgill.ecse211.project.Resources.leftMotor;
 import static ca.mcgill.ecse211.project.Resources.odometer;
 import static ca.mcgill.ecse211.project.Resources.rightMotor;
 import static ca.mcgill.ecse211.project.Resources.usSensor;
-
-import lejos.hardware.Sound;
 
 
 /**
@@ -76,7 +73,8 @@ public class Navigation {
     } else if (rotationAngle < -180) {
       rotationAngle = 360 + rotationAngle;
     }
-
+    
+    //angle error while turning
     int nav_turn_error = 1;
     // correct the heading
     leftMotor.rotate(NavigatorUtility.convertAngle(rotationAngle + nav_turn_error), true);
@@ -154,61 +152,33 @@ public class Navigation {
     double currX = odometer.getX();
 
     if (team.equals("Red")) { // red team
+    	//travel 1 tile away from tunnel opening
       if (Math.abs(UR_Y * TILE_SIZE - currY) < Math.abs(LL_Y * TILE_SIZE - currY)) {
         travelTo(LL_X - 1, UR_Y, MOTOR_LOW);
       } else {
         travelTo(LL_X - 1, LL_Y, MOTOR_LOW);
       }
       double currAngle = odometer.getAngle();
-      currAngle = (currAngle * 180.0 / 3.14159);
+      currAngle = Math.toDegrees(currAngle);
       NavigatorUtility.turnBy(-1 * currAngle);
       lightLocalizer.odoCorrectionFirst();
       lightLocalizer.odoCorrectionSecond();
+      //travel in a straight line through the tunnel
       travelTo(LL_X - 1, (LL_Y + UR_Y) / 2, MOTOR_LOW);
       lightLocalizer.singleLineCorrection(90);
       travelTo(UR_X + 1, (LL_Y + UR_Y) / 2, 350);
     } else { // green team
+    	//travel 1 tile away from tunnel opening
       travelTo(UR_X, LL_Y - 1, MOTOR_LOW);
       double currAngle = odometer.getAngle();
+      currAngle = Math.toDegrees(currAngle);
       NavigatorUtility.turnBy(-1 * currAngle);
       lightLocalizer.odoCorrectionFirst();
       lightLocalizer.odoCorrectionSecond();
+    //travel in a straight line through the tunnel
       travelTo((LL_X + UR_X) / 2, LL_Y - 1, MOTOR_LOW);
       lightLocalizer.singleLineCorrection(90);
       travelTo((LL_X + UR_X) / 2, UR_Y + 1, 350);
-    }
-  }
-
-
-  /**
-   * Returns the filtered distance between the US sensor and an obstacle in cm.
-   * 
-   * @return the filtered distance between the US sensor and an obstacle in cm
-   */
-  private int readUsDistance() {
-    usSensor.fetchSample(usData, 0);
-    // extract from buffer, convert to cm, cast to int, and filter
-    return filter((int) (usData[0] * 100.0));
-  }
-
-  /**
-   * Rudimentary filter - toss out invalid samples corresponding to null signal.
-   * 
-   * @param distance raw distance measured by the sensor in cm
-   * @return the filtered distance in cm
-   */
-  private int filter(int distance) {
-    if (distance >= 255 && invalidSampleCount < INVALID_SAMPLE_LIMIT) {
-      // bad value, increment the filter value and return the distance remembered from before
-      invalidSampleCount++;
-      return prevDistance;
-    } else {
-      if (distance < 255) {
-        // distance went below 255: reset filter and remember the input distance.
-        invalidSampleCount = 0;
-      }
-      prevDistance = distance;
-      return distance;
     }
   }
 }

@@ -29,11 +29,6 @@ public class Odometer implements Runnable {
    */
   private volatile double theta; // Heading angle
 
-  /**
-   * The (x, y, theta) position as an array.
-   */
-  private double[] position;
-
   // Thread control tools
   /**
    * Fair lock for concurrent writing.
@@ -50,10 +45,18 @@ public class Odometer implements Runnable {
    */
   private Condition doneResetting = lock.newCondition();
 
+  /*
+   * static odometer returned by getOdometer
+   */
   private static Odometer odo; // Returned as singleton
 
-  // Motor-related variables
+  /*
+   * to record latest tachometer count from left motor
+   */
   private static int leftMotorTachoCount = 0;
+  /*
+   * to record latest tachometer count from right motor
+   */
   private static int rightMotorTachoCount = 0;
 
   /**
@@ -138,8 +141,6 @@ public class Odometer implements Runnable {
     return new int[] {lastTachoL, lastTachoR};
   }
 
-  // IT IS NOT NECESSARY TO MODIFY ANYTHING BELOW THIS LINE
-
   /**
    * Returns the Odometer data.
    * 
@@ -186,31 +187,6 @@ public class Odometer implements Runnable {
     return getXyt()[1];
   }
 
-  /**
-   * Adds dx, dy and dtheta to the current values of x, y and theta, respectively. 
-   * Useful for odometry.
-   * 
-   * @param dx the change in x
-   * @param dy the change in y
-   * @param dtheta the change in theta
-   */
-  public void update(double dx, double dy, double dtheta) {
-    lock.lock();
-    isResetting = true;
-    try {
-      x += dx;
-      y += dy;
-      if (dtheta < 0) {
-        dtheta += 360;
-      }
-      theta = ((theta + dtheta) % 360); // keeps the updates within 360 degrees
-      isResetting = false;
-      doneResetting.signalAll(); // Let the other threads know we are done resetting
-    } finally {
-      lock.unlock();
-    }
-
-  }
 
   /**
    * Overrides the values of x, y and theta. Use for odometry correction.

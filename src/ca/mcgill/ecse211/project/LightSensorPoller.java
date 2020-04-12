@@ -24,6 +24,9 @@ import static ca.mcgill.ecse211.project.Resources.lightSensor;
  * @author Mustafain
  */
 public class LightSensorPoller implements Runnable {
+/**
+ * Sleep duration for thread
+ */
   private static final long PERIOD = 1000;
 
   /**
@@ -103,6 +106,7 @@ public class LightSensorPoller implements Runnable {
    * @return scaled sample from right color sensor
    */
   public static int getRightColorVal() {
+	 //scaled by 100
     return (int) (colorRight[0] * 100);
   }
 
@@ -112,6 +116,7 @@ public class LightSensorPoller implements Runnable {
    * @return scaled sample from left color sensor
    */
   public static int getLeftColorVal() {
+	//scaled by 100
     return (int) (colorLeft[0] * 100);
   }
 
@@ -135,6 +140,10 @@ public class LightSensorPoller implements Runnable {
     // for wall
     int wallStDEV = 2;
 
+    /*comparing red, green, blue values detected with a range of recorded samples.
+    Detected color is set if all three color values lie within a certain number
+    of standard deviations from mean*/
+    
     if ((colourBlue >= GREEN_MEAN[2] - stdDevs * GREEN_SD[2]) 
         && (colourBlue <= GREEN_MEAN[2] + stdDevs * GREEN_SD[2])) {
 

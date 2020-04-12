@@ -1,5 +1,6 @@
 package ca.mcgill.ecse211.project;
 
+import static ca.mcgill.ecse211.project.Resources.CLAW_ANGLE;
 import static ca.mcgill.ecse211.project.Resources.mediumRegulatedMotor;
 
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
@@ -24,7 +25,7 @@ public class RobotClaw {
   private EV3LargeRegulatedMotor clawMotor = mediumRegulatedMotor;
 
   /**
-   * It cannot be accessed externally.
+   * Private constructor for RobotClaw class, implemented as Singleton.
    */
   private RobotClaw() {
     // TODO
@@ -46,14 +47,15 @@ public class RobotClaw {
    * Opens the claw using the motor that the claw is attached to.
    */
   public void openClaw() {
-    // TODO
+	  clawMotor.rotate(-CLAW_ANGLE); 
+	  
   }
 
   /**
    * Closes the claw using the motor that the claw is attached to.
    */
   public void closeClaw() {
-    // TODO
+	  clawMotor.rotate(CLAW_ANGLE); 
   }
 
 }

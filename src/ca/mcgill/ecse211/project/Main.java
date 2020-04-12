@@ -6,6 +6,7 @@ import static ca.mcgill.ecse211.project.Resources.szr;
 import static ca.mcgill.ecse211.project.Resources.tnr;
 
 import lejos.hardware.Button;
+import lejos.hardware.Sound;
 
 /**
  * Main class to launch the program and acts as controller. 
@@ -72,6 +73,12 @@ public class Main {
       // TODO depending on what corner is started in, 
       // different initial positions and bearings must be set
       odometer.setXyt(TILE_SIZE, TILE_SIZE, 0.0);
+      
+      //beep 3 times to indicate end of initial localization
+      for(int i = 0 ; i < 3 ; i++) {
+    	  Sound.beep();
+    	  sleepFor(100);
+      }
 
       // navigate tunnel
       // TODO determine tunnel parameters depending on starting position
