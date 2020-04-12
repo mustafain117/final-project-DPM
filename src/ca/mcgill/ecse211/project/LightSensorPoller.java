@@ -26,17 +26,17 @@ import static ca.mcgill.ecse211.project.Resources.lightSensor;
 public class LightSensorPoller implements Runnable {
   private static final long PERIOD = 1000;
 
-  /*
+  /**
    * Float array to store RGB sample from middle color sensor.
    */
   private float[] colourData = new float[3];
   
-  /*
+  /**
    * Float array to store sample from right color sensor.
    */
   private static float[] colorRight = new float[colorSensorRight.sampleSize()];
   
-  /*
+  /**
    * Float array to store sample from left color sensor.
    */
   private static float[] colorLeft = new float[colorSensorLeft.sampleSize()];

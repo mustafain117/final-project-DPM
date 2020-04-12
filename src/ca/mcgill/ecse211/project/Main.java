@@ -28,10 +28,12 @@ public class Main {
    * Instance of UltrasoncicLocalization Class, used for initial localization.
    */
   private static UltrasonicLocalization usLocalizer;
+  
   /**
    * Instance of LightLocalization Class, used for odometer correction.
    */
   private static LightLocalization lightLocalizer;
+  
   /**
    * Instance of Navigation class, provides access to methods used for navigation of EV3.
    */

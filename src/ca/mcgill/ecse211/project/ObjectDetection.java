@@ -158,21 +158,21 @@ public class ObjectDetection implements Runnable {
     // Finding the closest corner of the search zone to the robot's location
     if (Math.abs(SZ_LL_X - currX) < Math.abs(SZ_UR_X - currX)) {
       closestCornerX = SZ_LL_X;
-      startCorner = 4;
+      startCorner = 4;  // lower left
     } else {
       closestCornerX = SZ_UR_X;
-      startCorner = 2;
+      startCorner = 2;  // upper right
     }
 
     if (Math.abs(SZ_LL_Y - currY) < Math.abs(SZ_UR_Y - currY)) {
       closestCornerY = SZ_LL_Y;
       if (startCorner == 2) {
-        startCorner = 1;
+        startCorner = 1; // upper left
       }
     } else {
       closestCornerY = SZ_UR_Y;
       if (startCorner == 4) {
-        startCorner = 3;
+        startCorner = 3; // lower right
       }
     }
 
@@ -200,12 +200,12 @@ public class ObjectDetection implements Runnable {
      * decreases the number of possible permutations of grid movement.
      */
 
-    if (startCorner == 2) {
+    if (startCorner == 2) { // upper right
       moveToWaypoint(SZ_LL_X + TILE_SIZE, SZ_UR_Y); // move to UL tile edge
       lightLoc.singleLineCorrection(0); // Localize
       moveToWaypoint(SZ_LL_X + 0.5 * TILE_SIZE, SZ_UR_Y); // Move to middle of UL tile
     }
-    if (startCorner == 3) {
+    if (startCorner == 3) { // lower right
       // move to UR corner, middle of Tile
       moveToWaypoint(SZ_UR_X - 0.5 * TILE_SIZE, SZ_UR_Y - 0.5 * TILE_SIZE); 
 
@@ -213,7 +213,7 @@ public class ObjectDetection implements Runnable {
       lightLoc.singleLineCorrection(0);
       moveToWaypoint(SZ_LL_X + 0.5 * TILE_SIZE, SZ_UR_Y);
     }
-    if (startCorner == 4) {
+    if (startCorner == 4) { // lower left
       moveToWaypoint(SZ_LL_X, SZ_UR_Y - TILE_SIZE);// move to UL tile edge
       lightLoc.singleLineCorrection(0); // Localize
       moveToWaypoint(SZ_LL_X, SZ_UR_Y - 0.5 * TILE_SIZE);// Move to middle of UL tile
