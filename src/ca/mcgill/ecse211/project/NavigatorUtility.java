@@ -1,19 +1,22 @@
 package ca.mcgill.ecse211.project;
 
 import static ca.mcgill.ecse211.project.Resources.BASE_WIDTH;
-import static ca.mcgill.ecse211.project.Resources.DEG_PER_RAD;
 import static ca.mcgill.ecse211.project.Resources.WHEEL_RAD;
 import static ca.mcgill.ecse211.project.Resources.leftMotor;
 import static ca.mcgill.ecse211.project.Resources.rightMotor;
 
 /**
- * Helper class with static methods used by {@link Navigation}, {@link LightLocalization} and {@link UltrasonicLocalization} classes.
+ * Helper class with static methods used by {@link Navigation}, 
+ * {@link LightLocalization} and
+ * {@link UltrasonicLocalization} classes.
+ * 
  * @author Mustafain, Bruno
  *
  */
 public class NavigatorUtility {
   /**
-   * Converts input distance to the total rotation of each wheel needed to cover that distance.
+   * Converts input distance to the total rotation 
+   * of each wheel needed to cover that distance.
    * 
    * @param distance the input distance
    * @return the wheel rotations necessary to cover the distance
@@ -23,8 +26,8 @@ public class NavigatorUtility {
   }
 
   /**
-   * Converts input angle to the total rotation of each wheel needed to rotate 
-   * the robot by that angle.
+   * Converts input angle to the total rotation of each 
+   * wheel needed to rotate the robot by that angle.
    * 
    * @param angle the input angle
    * @return the wheel rotations necessary to rotate the robot by the angle
@@ -34,10 +37,11 @@ public class NavigatorUtility {
   }
 
   /**
-   * Turns the robot by a specified angle. Note that this method is different 
-   * from {@code Navigation.turnTo()}. For example, if the robot is facing 90 
-   * degrees, calling {@code turnBy(90)} will make the robot turn to 180 degrees, 
-   * but calling {@code Navigation.turnTo(90)} should do nothing 
+   * Turns the robot by a specified angle. Note that this method is 
+   * different from {@code Navigation.turnTo()}. For example, if the 
+   * robot is facing 90 degrees, calling {@code turnBy(90)} will make 
+   * the robot turn to 180 degrees, but calling 
+   * {@code Navigation.turnTo(90)} should do nothing 
    * (since the robot is already at 90 degrees).
    * 
    * @param angle the angle by which to turn, in degrees
@@ -48,8 +52,8 @@ public class NavigatorUtility {
     leftMotor.rotate(convertAngle(angle), true);
     rightMotor.rotate(-convertAngle(angle), false);
   }
-  
-  
+
+
   /**
    * Rotates forward in a straight line for specified distance.
    * 
@@ -57,7 +61,8 @@ public class NavigatorUtility {
    * @param speed the speed in deg/s
    */
   public static void moveDistFwd(int distance, int speed) {
-   int rotationAngle = (int) (distance * Resources.DIST_TO_DEG / 100); // Convert linear distance to turns
+    // Convert linear distance to turns
+    int rotationAngle = (int) (distance * Resources.DIST_TO_DEG / 100);
     leftMotor.setSpeed(speed); // Roll both motors forward
     rightMotor.setSpeed(speed);
     leftMotor.rotate(rotationAngle, true); // Rotate left motor - DO NOT BLOCK
