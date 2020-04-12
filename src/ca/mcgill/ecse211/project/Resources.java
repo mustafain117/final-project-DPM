@@ -87,6 +87,7 @@ public class Resources {
    * The right motor.
    */
   public static final EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(MotorPort.B);
+  
   /**
    * The motor used for the claw.
    */

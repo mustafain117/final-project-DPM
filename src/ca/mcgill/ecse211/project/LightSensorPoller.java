@@ -30,10 +30,12 @@ public class LightSensorPoller implements Runnable {
    * Float array to store RGB sample from middle color sensor.
    */
   private float[] colourData = new float[3];
+  
   /*
    * Float array to store sample from right color sensor.
    */
   private static float[] colorRight = new float[colorSensorRight.sampleSize()];
+  
   /*
    * Float array to store sample from left color sensor.
    */
@@ -59,7 +61,6 @@ public class LightSensorPoller implements Runnable {
    */
   public void run() {
     long updateStart;
-    long updateDuration;
     updateStart = System.currentTimeMillis();
 
     while (true) {
@@ -83,7 +84,8 @@ public class LightSensorPoller implements Runnable {
           / Math.sqrt(colourRed * colourRed + colourGreen * colourGreen + colourBlue * colourBlue));
 
       updateDetectedColour(normRed, normGreen, normBlue);
-
+      
+      long updateDuration;
       updateDuration = System.currentTimeMillis() - updateStart;
       if (updateDuration < PERIOD) {
         try {

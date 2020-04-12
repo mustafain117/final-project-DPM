@@ -17,13 +17,19 @@ import static ca.mcgill.ecse211.project.Resources.rightMotor;
  */
 public class LightLocalization {
 
-  // Distance between sensors and front axle
+  /** 
+   * Distance between sensors and front axle.
+   */
   private int fow = 150;
   
-  // Pull Back on the wheel to clear the line to ensure consistent trials
+  /** 
+   * Pull Back on the wheel to clear the line to ensure consistent trials.
+   */
   private int pullBack = -50;
 
-  // Testing parameter for shifting the final orientation
+  /** 
+   * Testing parameter for shifting the final orientation.
+   */
   private int lineThicknessCorrection = 0;
 
   /**
@@ -40,14 +46,12 @@ public class LightLocalization {
     // Move past first line
     NavigatorUtility.moveDistFwd((int) TILE_SIZE * 100 / 3, 100);
 
-
     odoCorrectionFirst();
 
     // Traverse the second line (x=1) to use the odo correction method
     NavigatorUtility.moveDistFwd((int) TILE_SIZE * 100 / 4, 100);
     
     odoCorrectionSecond();
-    
     sleepFor(3000);
 
     // Rotate back to suitable bearing, turn 270 degrees
@@ -79,7 +83,6 @@ public class LightLocalization {
         rightMotor.stop(true);
         leftMotor.rotate(-pullBack);
         leftMotor.backward();
-
 
         while (LightSensorPoller.getLeftColorVal() > 30) {
         }
@@ -129,7 +132,7 @@ public class LightLocalization {
         leftMotor.stop(true);
         sleepFor(1000);
         NavigatorUtility.moveDistFwd(fow, 100);
-        NavigatorUtility.turnBy(90);
+        NavigatorUtility.turnBy(90); // turn by 90 degrees
         break;
       }
 

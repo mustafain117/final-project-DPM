@@ -61,7 +61,6 @@ public class Odometer implements Runnable {
    */
   private static final long ODOMETER_PERIOD = 25;
 
-
   private int lastTachoL; // Last tacho counts for L and R moors
   private int lastTachoR;
 
@@ -109,8 +108,8 @@ public class Odometer implements Runnable {
       double distR = Math.PI * WHEEL_RAD * (rightMotorTachoCount - lastTachoR) / 180;
       lastTachoL = leftMotorTachoCount;
       lastTachoR = rightMotorTachoCount;
-      double deltaD = 0.5 * (distL + distR);
-      double deltaT = (distL - distR) / BASE_WIDTH;// compute change in heading
+      double deltaD = 0.5 * (distL + distR); 
+      double deltaT = (distL - distR) / BASE_WIDTH; // compute change in heading
       setTheta(this.theta + deltaT);
       double dX = deltaD * Math.sin(theta); // compute X component of displacement
       double dY = deltaD * Math.cos(theta); // compute Y component of displacement
@@ -136,10 +135,7 @@ public class Odometer implements Runnable {
    * @return the array containing the tacho count for left and right motors.
    */
   public int[] getTachos() {
-    int[] arr = new int[2];
-    arr[0] = lastTachoL;
-    arr[1] = lastTachoR;
-    return arr;
+    return new int[] {lastTachoL, lastTachoR};
   }
 
   // IT IS NOT NECESSARY TO MODIFY ANYTHING BELOW THIS LINE

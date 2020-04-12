@@ -182,7 +182,7 @@ public class ObjectDetection implements Runnable {
     Point IL_LL = island.ll;
     Point IL_UR = island.ur;
 
-    // Correcting the position in case its on the edge of the search zone
+    // Correcting the position in case the robot is on the edge of the search zone
     closestCornerX = (closestCornerX == IL_LL.x) ? closestCornerX + 0.5 * TILE_SIZE : closestCornerX;
     closestCornerX = (closestCornerX == IL_UR.x) ? closestCornerX - 0.5 * TILE_SIZE : closestCornerX;
 
@@ -201,9 +201,9 @@ public class ObjectDetection implements Runnable {
      */
 
     if (startCorner == 2) {
-      moveToWaypoint(SZ_LL_X + TILE_SIZE, SZ_UR_Y);// move to UL tile edge
+      moveToWaypoint(SZ_LL_X + TILE_SIZE, SZ_UR_Y); // move to UL tile edge
       lightLoc.singleLineCorrection(0); // Localize
-      moveToWaypoint(SZ_LL_X + 0.5 * TILE_SIZE, SZ_UR_Y);// Move to middle of UL tile
+      moveToWaypoint(SZ_LL_X + 0.5 * TILE_SIZE, SZ_UR_Y); // Move to middle of UL tile
     }
     if (startCorner == 3) {
       // move to UR corner, middle of Tile
@@ -332,7 +332,7 @@ public class ObjectDetection implements Runnable {
     double currX = odoValues[0];
     double currY = odoValues[1];
 
-    if (currDirection == 1) {
+    if (currDirection == 1) { // +y direction
 
       if (Math.abs(currX - SZ_LL_X) > TILE_SIZE) { // is there a tile in SZ to the left?
         // then go to left tile to avoid obstacle
@@ -347,7 +347,7 @@ public class ObjectDetection implements Runnable {
       }
       nextY += 2 * TILE_SIZE; // update next grid location
     }
-    if (currDirection == 3) {
+    if (currDirection == 3) { // -y direction
       if (Math.abs(currX - SZ_LL_X) > TILE_SIZE) { // is there a tile in SZ to the left?
         // then go to left tile to avoid obstacle
         moveToWaypoint(currX - TILE_SIZE, currY);
@@ -362,7 +362,7 @@ public class ObjectDetection implements Runnable {
       nextY -= 2 * TILE_SIZE; // update next grid location
     }
 
-    if (currDirection == 2) {
+    if (currDirection == 2) { // +x direction
       if (Math.abs(currY - SZ_UR_Y) > TILE_SIZE) { // is there a tile in SZ to the left?
         // then go to the tile above to avoid obstacle
         moveToWaypoint(currX, currY + TILE_SIZE);
@@ -376,7 +376,7 @@ public class ObjectDetection implements Runnable {
       }
       nextX += 2 * TILE_SIZE; // update next grid location
     }
-    if (currDirection == 4) {
+    if (currDirection == 4) { // -x direction
       if (Math.abs(currY - SZ_UR_Y) > TILE_SIZE) { // is there a tile in SZ to the left?
         // then go to the tile above to avoid obstacle
         moveToWaypoint(currX, currY + TILE_SIZE);
@@ -408,7 +408,6 @@ public class ObjectDetection implements Runnable {
 
     double theta = Math.atan2(distX, distY);
 
-    // Sound.beep();
     leftMotor.setSpeed(MOTOR_LOW);
     rightMotor.setSpeed(MOTOR_LOW);
     navigation.turnTo(theta);
@@ -495,6 +494,7 @@ public class ObjectDetection implements Runnable {
    */
   private int readUsDistance() {
     usSensor.fetchSample(usData, 0);
+    
     // extract from buffer, convert to cm, cast to int, and filter
     return filter((int) (usData[0] * 100.0)); // *100 for cm instead of m
   }

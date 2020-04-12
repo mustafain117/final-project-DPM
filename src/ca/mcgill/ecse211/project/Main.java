@@ -78,7 +78,7 @@ public class Main {
       // Add search and avoid obstacles
       RobotClaw claw = RobotClaw.getClaw();
       ObjectDetection detector = new ObjectDetection(usLocalizer, navigation, claw, lightLocalizer);
-      // TODO determine paramters depending on wifi paramteters
+      // TODO determine parameters depending on wifi parameters
       detector.searchVehicle(szr.ll.x, szr.ll.y, szr.ur.x, szr.ur.y);
 
 

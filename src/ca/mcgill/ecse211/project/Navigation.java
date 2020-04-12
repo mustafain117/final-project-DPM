@@ -76,7 +76,7 @@ public class Navigation {
     } else if (rotationAngle < -180) {
       rotationAngle = 360 + rotationAngle;
     }
-    Sound.beep();
+
     int nav_turn_error = 1;
     // correct the heading
     leftMotor.rotate(NavigatorUtility.convertAngle(rotationAngle + nav_turn_error), true);
@@ -95,8 +95,8 @@ public class Navigation {
    */
   public void travelTo(double x, double y, int speed) {
     // convert map coordinates to centimetres
-    x = x * TILE_SIZE;
-    y = y * TILE_SIZE;
+    x *= TILE_SIZE;
+    y *= TILE_SIZE;
 
     odoValues = odometer.getXyt();
 
