@@ -1,6 +1,10 @@
 package ca.mcgill.ecse211.project;
 
-import static ca.mcgill.ecse211.project.Resources.*;
+import static ca.mcgill.ecse211.project.Resources.BASE_WIDTH;
+import static ca.mcgill.ecse211.project.Resources.WHEEL_RAD;
+import static ca.mcgill.ecse211.project.Resources.leftMotor;
+import static ca.mcgill.ecse211.project.Resources.rightMotor;
+
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -8,7 +12,6 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * The odometer class keeps track of the robot's (x, y, theta) position.
  */
-
 public class Odometer implements Runnable {
 
   /**
@@ -63,8 +66,9 @@ public class Odometer implements Runnable {
   private int lastTachoR;
 
   /**
-   * This is the default constructor of this class. It initiates all motors 
-   * and variables once. It cannot be accessed externally.
+   * This is the default constructor of this class. 
+   * It initiates all motors and variables once. 
+   * It cannot be accessed externally.
    */
   private Odometer() {
     setXyt(0, 0, 0);
@@ -81,16 +85,18 @@ public class Odometer implements Runnable {
     if (odo == null) {
       odo = new Odometer();
     }
-
     return odo;
   }
 
   /**
-   * This method is where the logic for the odometer will run. <p>It estimates the left and right wheel displacements using tachometer counts. 
-   * The change in angle is then calculated using these estimated displacements using the wheel base and wheel radius of the robot.
+   * This method is where the logic for the odometer will run.
+   * 
+   * <p>It estimates the left and right wheel displacements using tachometer counts. 
+   * The change in angle is then calculated using these estimated displacements 
+   * using the wheel base and wheel radius of the robot.
    */
   public void run() {
-    
+
     while (true) {
       long updateStart = System.currentTimeMillis();
 
@@ -164,22 +170,26 @@ public class Odometer implements Runnable {
     }
     return position;
   }
-  
+
   /**
-   * Returns the x-axis position 
+   * Returns the x-axis position.
+   * 
    * @return the odometer x position
    */
   public double getX() {
     return getXyt()[0];
   }
-  
+
   /**
-   * Returns the y-axis position 
+   * Returns the y-axis position.
+   * 
    * @return the odometer y position
    */
   public double getY() {
+   
     return getXyt()[1];
   }
+
   /**
    * Adds dx, dy and dtheta to the current values of x, y and theta, respectively. 
    * Useful for odometry.
