@@ -1,11 +1,29 @@
 package ca.mcgill.ecse211.project;
 
-import static ca.mcgill.ecse211.project.Resources.*;
+import static ca.mcgill.ecse211.project.Resources.BASE_WIDTH;
+import static ca.mcgill.ecse211.project.Resources.INITIAL_DIST_THRESHOLD;
+import static ca.mcgill.ecse211.project.Resources.INVALID_SAMPLE_LIMIT;
+import static ca.mcgill.ecse211.project.Resources.MOTOR_HIGH;
+import static ca.mcgill.ecse211.project.Resources.MOTOR_ROT;
+import static ca.mcgill.ecse211.project.Resources.ROBOT_LENGTH;
+import static ca.mcgill.ecse211.project.Resources.THETA_HIGH_FALLING;
+import static ca.mcgill.ecse211.project.Resources.THETA_LOW_FALLING;
+import static ca.mcgill.ecse211.project.Resources.TURNING_ERROR;
+import static ca.mcgill.ecse211.project.Resources.TURN_180;
+import static ca.mcgill.ecse211.project.Resources.TURN_90;
+import static ca.mcgill.ecse211.project.Resources.WALL_DIST;
+import static ca.mcgill.ecse211.project.Resources.WHEEL_RAD;
+import static ca.mcgill.ecse211.project.Resources.leftMotor;
+import static ca.mcgill.ecse211.project.Resources.odometer;
+import static ca.mcgill.ecse211.project.Resources.rightMotor;
+import static ca.mcgill.ecse211.project.Resources.usSensor;
+
 import lejos.hardware.Sound;
 
 /**
- * The UltrasonicLocalization class implements the ultrasonic localization techniques using
- * falling edge. Also implements movement to the point (1,1) using ultrasonic sensor
+ * The UltrasonicLocalization class implements the ultrasonic 
+ * localization techniques using falling edge. Also
+ * implements movement to the point (1,1) using ultrasonic sensor.
  */
 public class UltrasonicLocalization {
 
@@ -41,71 +59,74 @@ public class UltrasonicLocalization {
 
   /**
    * Constructor for the {@code UsLocalizer} class.
-   *
    */
   public UltrasonicLocalization() {
   }
 
   /**
-   * Performs localization process based on falling edge technique, localizes the heading to 0 degrees. Uses the ultrasonice sensor
-   * to detect the edges of the wall and uses odometer theta values to calculate angle to turn to in order to localize heading to 0 degrees.
+   * Performs localization process based on falling edge technique, 
+   * localizes the heading to 0 degrees. Uses the ultrasonic sensor 
+   * to detect the edges of the wall and uses odometer's theta 
+   * values to calculate angle to turn to in order to localize 
+   * heading to 0 degrees.
    */
-  public void doLocalization() {
-    double angleA;  // angle to first falling edge
-    double angleB;  // angle to second falling edge
-
+  public void doLocalization() {   
     // set the rotational speed of the motors slow to get more sensor data
     leftMotor.setSpeed(MOTOR_ROT);
     rightMotor.setSpeed(MOTOR_ROT);
 
-      // represents case where robot starts off facing the wall; turn away from the wall
-      while (readUsDistance() < INITIAL_DIST_THRESHOLD) {
-        rotateClockwise();
-      }
-      // stop the motors
-      rightMotor.stop();
-      leftMotor.stop();
-      odometer.setXyt(0,0,0);   // reset the odometer, then begin actual localization process
-      // rotate until robot faces away from wall
-      while (readUsDistance() < WALL_DIST + errorMargin) {
-        rotateAntiClockwise();
-      }
-      // rotate until robot faces wall, record angle
-      while (readUsDistance() > WALL_DIST) {
-        rotateAntiClockwise();
-      }
-      angleA = convertAngle(odometer.getXyt()[2]);
-      Sound.beep();
-      // turn 90 degrees to avoid error where robot reads the two falling edges on the same wall 
-      NavigatorUtility.turnBy(TURN_90);
-      // switch direction and face wall
-      while (readUsDistance() < WALL_DIST + errorMargin) {
-        rotateClockwise();
-      }
+    // represents case where robot starts off facing the wall; turn away from the wall
+    while (readUsDistance() < INITIAL_DIST_THRESHOLD) {
+      rotateClockwise();
+    }
+    // stop the motors
+    rightMotor.stop();
+    leftMotor.stop();
+    odometer.setXyt(0, 0, 0); // reset the odometer, then begin actual localization process
 
-      // keep rotating until faces wall
-      while (readUsDistance() > WALL_DIST) {
-        rotateClockwise();
-      }
-      rightMotor.stop();    // stop motors, make a beep sound
-      leftMotor.stop();
-      Sound.beep();
+    // rotate until robot faces away from wall
+    while (readUsDistance() < WALL_DIST + errorMargin) {
+      rotateAntiClockwise();
+    }
+    
+    // rotate until robot faces wall, record angle
+    while (readUsDistance() > WALL_DIST) {
+      rotateAntiClockwise();
+    }
+    
+    double angleA; // angle to first falling edge
+    angleA = convertAngle(odometer.getXyt()[2]);
 
-      angleB = convertAngle(odometer.getXyt()[2]);
+    // turn 90 degrees to avoid error where robot reads the two falling edges on the same wall
+    NavigatorUtility.turnBy(TURN_90);
+    // switch direction and face wall
+    while (readUsDistance() < WALL_DIST + errorMargin) {
+      rotateClockwise();
+    }
 
-      // calculate angle to turn to correct heading to 0 degrees;
-      // this formula is from the localization tutorial
-      if (angleA > angleB) {
-        deltaT = THETA_HIGH_FALLING - (angleA + angleB) / 2;
-      } else {
-        deltaT = THETA_LOW_FALLING - (angleA + angleB) / 2;
-      }
+    // keep rotating until faces wall
+    while (readUsDistance() > WALL_DIST) {
+      rotateClockwise();
+    }
+    rightMotor.stop(); // stop motors
+    leftMotor.stop();
 
-      rotationAngle = deltaT + angleB;  // angle needed to rotate to 0 deg
+    double angleB; // angle to second falling edge
+    angleB = convertAngle(odometer.getXyt()[2]);
 
-      leftMotor.rotate(-getDistance(WHEEL_RAD, BASE_WIDTH, rotationAngle - TURNING_ERROR), true);
-      rightMotor.rotate(getDistance(WHEEL_RAD, BASE_WIDTH, rotationAngle - TURNING_ERROR), false);
-} 
+    // calculate angle to turn to correct heading to 0 degrees;
+    // this formula is from the localization tutorial
+    if (angleA > angleB) {
+      deltaT = THETA_HIGH_FALLING - (angleA + angleB) / 2;
+    } else {
+      deltaT = THETA_LOW_FALLING - (angleA + angleB) / 2;
+    }
+
+    rotationAngle = deltaT + angleB; // angle needed to rotate to 0 deg
+
+    leftMotor.rotate(-getDistance(WHEEL_RAD, BASE_WIDTH, rotationAngle - TURNING_ERROR), true);
+    rightMotor.rotate(getDistance(WHEEL_RAD, BASE_WIDTH, rotationAngle - TURNING_ERROR), false);
+  }
 
 
   /**
@@ -144,7 +165,6 @@ public class UltrasonicLocalization {
       if (distance < 255) {
         // distance went below 255: reset filter and remember the input distance.
         invalidSampleCount = 0;
-        // minDistance = Math.min(minDistance, distance);
       }
       prevDistance = distance;
       return distance;
@@ -152,8 +172,8 @@ public class UltrasonicLocalization {
   }
 
   /**
-   * Rotates the robot in the clockwise direction by turning the 
-   * left motor forward and the right motor backward.
+   * Rotates the robot in the clockwise direction by turning 
+   * the left motor forward and the right motor backward.
    */
   private void rotateClockwise() {
     leftMotor.forward();
@@ -161,8 +181,9 @@ public class UltrasonicLocalization {
   }
 
   /**
-   * Rotates the robot in the counter-clockwise direction by turning 
-   * the left motor backward and the right motor forward.
+   * Rotates the robot in the counter-clockwise direction by 
+   * turning the left motor backward and the right motor
+   * forward.
    */
   private void rotateAntiClockwise() {
     leftMotor.backward();
@@ -170,7 +191,7 @@ public class UltrasonicLocalization {
   }
 
   /**
-   * Gets the distance to rotate given the radius of the wheels,
+   * Gets the distance to rotate given the radius of the wheels, 
    * the distance between the wheels, and the angle to turn.
    * 
    * @param radius Radius of the robot's wheels
@@ -178,26 +199,26 @@ public class UltrasonicLocalization {
    * @param angle Angle to rotate the robot
    * @return distance int converted distance
    */
-  private  int getDistance(double radius, double width, double angle) {
+  private int getDistance(double radius, double width, double angle) {
     return convertDistance(radius, Math.PI * width * angle / 360.0);
   }
 
   /**
-   * Converts the input radius and distance to an angle to rotate, based on the
-   * formula {@code (arc length) = (radius) * (theta)}.
+   * Converts the input radius and distance to an angle to rotate, based on the formula
+   * {@code (arc length) = (radius) * (theta)}.
    * 
    * @param radius Radius of the robot's wheels
    * @param distance The length of the arc traced out by the turn
    * @return
    */
-  private  int convertDistance(double radius, double distance) {
+  private int convertDistance(double radius, double distance) {
     return (int) ((180.0 * distance) / (Math.PI * radius));
   }
 
   /**
-   * Uses the ultrasonic sensor to read the x and y distances that the robot is 
-   * from the wall. These distances are used to calculate the distance that the 
-   * robot needs to travel to get to (1,1).
+   * Uses the ultrasonic sensor to read the x and y distances 
+   * that the robot is from the wall. These distances are used
+   * to calculate the distance that the robot needs to travel to get to (1,1).
    * 
    * @return double array containing x and y distances from the wall
    */
@@ -205,14 +226,17 @@ public class UltrasonicLocalization {
     leftMotor.setSpeed(MOTOR_HIGH); // set left and right motor speeds high
     rightMotor.setSpeed(MOTOR_HIGH);
     NavigatorUtility.turnBy(TURN_180); // turn robot by 180 degrees
-    double y;
-    double x;
+    double y;   // checkstyle raises violation if I combine double y = readUsDistance();
     y = readUsDistance(); // read y distance
+    
     leftMotor.setSpeed(MOTOR_HIGH);
     rightMotor.setSpeed(MOTOR_HIGH);
     NavigatorUtility.turnBy(TURN_90); // turn robot by 90 degrees
+    
+    double x;
     x = readUsDistance(); // read x distance
-    NavigatorUtility.turnBy(TURN_90); // rotate 90 degrees and return to original 0 degree heading
+    
+    NavigatorUtility.turnBy(TURN_90); // rotate 90 degrees and return to 0 degree heading
     return new double[] {x, y};
   }
 
