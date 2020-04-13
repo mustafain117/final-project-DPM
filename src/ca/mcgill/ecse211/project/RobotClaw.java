@@ -18,7 +18,7 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 public class RobotClaw {
 
   private static RobotClaw claw;
-  
+
   /**
    * Motor controlling the claw.
    */
@@ -47,15 +47,15 @@ public class RobotClaw {
    * Opens the claw using the motor that the claw is attached to.
    */
   public void openClaw() {
-	  clawMotor.rotate(-CLAW_ANGLE); 
-	  
+    clawMotor.rotate(-CLAW_ANGLE);
+
   }
 
   /**
    * Closes the claw using the motor that the claw is attached to.
    */
   public void closeClaw() {
-	  clawMotor.rotate(CLAW_ANGLE); 
+    clawMotor.rotate(CLAW_ANGLE);
   }
 
 }

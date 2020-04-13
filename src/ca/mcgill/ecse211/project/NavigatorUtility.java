@@ -53,7 +53,6 @@ public class NavigatorUtility {
     rightMotor.rotate(-convertAngle(angle), false);
   }
 
-
   /**
    * Rotates forward in a straight line for specified distance.
    * 
@@ -62,7 +61,8 @@ public class NavigatorUtility {
    */
   public static void moveDistFwd(int distance, int speed) {
     // Convert linear distance to turns
-    int rotationAngle = (int) (distance * Resources.DIST_TO_DEG / 100); //division by 100 because input is in mm
+    // division by 100 because input is in mm
+    int rotationAngle = (int) (distance * Resources.DIST_TO_DEG / 100);
     leftMotor.setSpeed(speed); // Roll both motors forward
     rightMotor.setSpeed(speed);
     leftMotor.rotate(rotationAngle, true); // Rotate left motor - DO NOT BLOCK

@@ -1,16 +1,13 @@
 package ca.mcgill.ecse211.project;
 
 import static ca.mcgill.ecse211.project.Resources.DEG_PER_RAD;
+import static ca.mcgill.ecse211.project.Resources.LINE_COLOR_THRESHOLD;
+import static ca.mcgill.ecse211.project.Resources.MOTOR_LOW;
+import static ca.mcgill.ecse211.project.Resources.THIRD_OF_TILE;
 import static ca.mcgill.ecse211.project.Resources.TILE_SIZE;
 import static ca.mcgill.ecse211.project.Resources.leftMotor;
 import static ca.mcgill.ecse211.project.Resources.odometer;
 import static ca.mcgill.ecse211.project.Resources.rightMotor;
-import static ca.mcgill.ecse211.project.Resources.LINE_COLOR_THRESHOLD;
-import static ca.mcgill.ecse211.project.Resources.MOTOR_LOW;
-import static ca.mcgill.ecse211.project.Resources.THIRD_OF_TILE;
-
-
-
 
 /**
  * This class will provide methods to perform odometer correction using 
@@ -23,17 +20,17 @@ import static ca.mcgill.ecse211.project.Resources.THIRD_OF_TILE;
  */
 public class LightLocalization {
 
-  /** 
+  /**
    * Distance between sensors and front axle.
    */
   private int fow = 150;
-  
-  /** 
+
+  /**
    * Pull Back on the wheel to clear the line to ensure consistent trials.
    */
   private int pullBack = -50;
 
-  /** 
+  /**
    * Testing parameter for shifting the final orientation.
    */
   private int lineThicknessCorrection = 0;
@@ -41,7 +38,7 @@ public class LightLocalization {
   /**
    * Creates a LightLocalization object.
    */
-  public LightLocalization() { 
+  public LightLocalization() {
   }
 
   /**
@@ -49,21 +46,19 @@ public class LightLocalization {
    */
   public void initialLocalizationUsingLS() {
 
-    // Move past first line
-	  
-
-    NavigatorUtility.moveDistFwd((int) THIRD_OF_TILE*100, MOTOR_LOW); //multiply by 100 to keep precision
+    // Move past first line and multiply by 100 to keep precision
+    NavigatorUtility.moveDistFwd((int) THIRD_OF_TILE * 100, MOTOR_LOW);
 
     odoCorrectionFirst();
 
-    // Traverse the second line (x=1) to use the odo correction method
-    NavigatorUtility.moveDistFwd((int) THIRD_OF_TILE*100, MOTOR_LOW); //multiply by 100 to keep precision
-    
+    // Traverse the second line (x=1) to use the odoCorrection method and
+    // multiply by 100 to keep precision
+    NavigatorUtility.moveDistFwd((int) THIRD_OF_TILE * 100, MOTOR_LOW);
+
     odoCorrectionSecond();
     sleepFor(3000);
-    
-    //robot is now at (1,1)
-    
+
+    // robot is now at (1,1)
     // Rotate back to suitable bearing, facing away from corner along y axis
     NavigatorUtility.turnBy(-90);
   }
@@ -77,11 +72,12 @@ public class LightLocalization {
    */
   public void singleLineCorrection(double turnBy) {
     NavigatorUtility.turnBy(turnBy);
-    NavigatorUtility.moveDistFwd(250, MOTOR_LOW);
+    NavigatorUtility.moveDistFwd(250, MOTOR_LOW); // 250 was found to be the best distance
 
     while (true) {
 
-      if (LightSensorPoller.getRightColorVal() <= LINE_COLOR_THRESHOLD && LightSensorPoller.getLeftColorVal() <= LINE_COLOR_THRESHOLD) {
+      if (LightSensorPoller.getRightColorVal() <= LINE_COLOR_THRESHOLD
+          && LightSensorPoller.getLeftColorVal() <= LINE_COLOR_THRESHOLD) {
         rightMotor.stop(true);
         leftMotor.stop(true);
         sleepFor(1000);
@@ -102,7 +98,7 @@ public class LightLocalization {
         sleepFor(1000);
         NavigatorUtility.moveDistFwd(fow, MOTOR_LOW);
         break;
-      
+
       } else if (LightSensorPoller.getLeftColorVal() <= LINE_COLOR_THRESHOLD) {
         leftMotor.stop(true);
         rightMotor.rotate(-pullBack);
@@ -137,7 +133,8 @@ public class LightLocalization {
   public void odoCorrectionFirst() {
     while (true) {
 
-      if (LightSensorPoller.getRightColorVal() <= LINE_COLOR_THRESHOLD && LightSensorPoller.getLeftColorVal() <= LINE_COLOR_THRESHOLD) {
+      if (LightSensorPoller.getRightColorVal() <= LINE_COLOR_THRESHOLD
+          && LightSensorPoller.getLeftColorVal() <= LINE_COLOR_THRESHOLD) {
         rightMotor.stop(true);
         leftMotor.stop(true);
         sleepFor(1000);
@@ -193,15 +190,15 @@ public class LightLocalization {
    * line. The robot now sits centered above a point on the grid.
    */
   public void odoCorrectionSecond() {
-	  
-	int quarterOfTile=(int)TILE_SIZE/ 4;
-	
+
+    int quarterOfTile = (int) TILE_SIZE / 4;
     // Go over line to then move backwards into it
     NavigatorUtility.moveDistFwd(quarterOfTile, 100);
 
     while (true) {
 
-      if (LightSensorPoller.getRightColorVal() <= LINE_COLOR_THRESHOLD && LightSensorPoller.getLeftColorVal() <= LINE_COLOR_THRESHOLD) {
+      if (LightSensorPoller.getRightColorVal() <= LINE_COLOR_THRESHOLD
+          && LightSensorPoller.getLeftColorVal() <= LINE_COLOR_THRESHOLD) {
         rightMotor.stop(true);
         leftMotor.stop(true);
         sleepFor(1000);
@@ -258,8 +255,8 @@ public class LightLocalization {
 
     double currentOdoTheta = odometer.getXyt()[2];
 
-    //Correct theta (round to either 90 or 270 since we know it is at either one of those points)
-    //Note that theta is stored in radians, hence the DEG_PER_RAD conversion
+    // Correct theta (round to either 90 or 270 since we know it is at either one of those points)
+    // Note that theta is stored in radians, hence the DEG_PER_RAD conversion
     if (currentOdoTheta < 100 / DEG_PER_RAD && currentOdoTheta > 80 / DEG_PER_RAD) {
       odometer.setTheta(90 / Resources.DEG_PER_RAD);
     } else {

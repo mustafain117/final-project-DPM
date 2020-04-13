@@ -3,9 +3,6 @@ package ca.mcgill.ecse211.project;
 import ca.mcgill.ecse211.playingfield.Point;
 import ca.mcgill.ecse211.playingfield.Region;
 import ca.mcgill.ecse211.wificlient.WifiConnection;
-
-import static ca.mcgill.ecse211.project.Resources.TILE_SIZE;
-
 import java.math.BigDecimal;
 import java.util.Map;
 import lejos.hardware.ev3.LocalEV3;
@@ -65,19 +62,19 @@ public class Resources {
    * The ultrasonic sensor.
    */
   public static final EV3UltrasonicSensor usSensor = new EV3UltrasonicSensor(SensorPort.S1);
-  
+
   /**
    * The light sensor used for colour ring detection.
    */
   public static final EV3ColorSensor lightSensor = new EV3ColorSensor(SensorPort.S3);
 
-  /** 
-   * The right Light Sensor sensor. 
+  /**
+   * The right Light Sensor sensor.
    */
   public static final EV3ColorSensor colorSensorRight = new EV3ColorSensor(SensorPort.S4);
 
-  /** 
-   * The left Light Sensor sensor. 
+  /**
+   * The left Light Sensor sensor.
    */
   public static final EV3ColorSensor colorSensorLeft = new EV3ColorSensor(SensorPort.S2);
 
@@ -90,7 +87,7 @@ public class Resources {
    * The right motor.
    */
   public static final EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(MotorPort.B);
-  
+
   /**
    * The motor used for the claw.
    */
@@ -115,11 +112,11 @@ public class Resources {
    * The distance between the US sensor and the front of the vehicle.
    */
   public static final double US_OFFSET = 8;
-  
+
   /**
-   * The color value threshold for the line detection
+   * The color value threshold for the line detection.
    */
-  public static final double LINE_COLOR_THRESHOLD=30;
+  public static final double LINE_COLOR_THRESHOLD = 30;
   /**
    * The angle of rotation for the claw to open.
    */
@@ -129,17 +126,17 @@ public class Resources {
    * The base width of the robot.
    */
   public static final double BASE_WIDTH = 16.03;
-  
+
   /**
    * Speed of slower rotating wheel (deg/sec). Used during ultrasonic localization.
    */
   public static final int MOTOR_LOW = 150;
-  
+
   /**
    * Speed of the faster rotating wheel (deg/sec).
    */
   public static final int MOTOR_HIGH = 200;
-  
+
   /**
    * The limit of invalid samples that we read from the US sensor before assuming no obstacle.
    */
@@ -149,18 +146,16 @@ public class Resources {
    * The tile size in centimeters. Note that 30.48 cm = 1 ft.
    */
   public static final double TILE_SIZE = 30.48;
-  
+
   /**
    * Half a tile in centimeters =30.48/2 cm
    */
-  public static final double HALF_TILE= 0.5*TILE_SIZE;
-  
+  public static final double HALF_TILE = 0.5 * TILE_SIZE;
+
   /**
-   * Third of a tile, in centimeters
+   * One third of a tile, in centimeters.
    */
-  public static final double  THIRD_OF_TILE=TILE_SIZE/ 3;
-
-
+  public static final double THIRD_OF_TILE = TILE_SIZE / 3;
 
   /**
    * Standard deviation for colour sensing.
@@ -176,7 +171,7 @@ public class Resources {
    * Ideal distance between the ultrasonic sensor and the wall (cm).
    */
   public static final int WALL_DIST = 30;
-  
+
   /**
    * Higher angle to subtract the averaged angles measured during the 
    * falling edge localization process.
@@ -184,7 +179,7 @@ public class Resources {
   public static final int THETA_HIGH_FALLING = 245;
 
   /** 
-   * The number of degrees in one radian (180/PI). 
+   * The number of degrees in one radians (180/PI). 
    */
   public static final double DEG_PER_RAD = 57.2598;
 
@@ -210,12 +205,12 @@ public class Resources {
    * process will begin.
    */
   public static final int INITIAL_DIST_THRESHOLD = 100;
-  
+
   /**
    * Error value tuned to get proper turns on the wheels.
    */
   public static final double TURNING_ERROR = 19.25;
-  
+
   /**
    * Wheel speed during rotation after localization is finished (deg/sec).
    */

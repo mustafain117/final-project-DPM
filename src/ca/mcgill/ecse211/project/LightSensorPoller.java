@@ -33,12 +33,12 @@ public class LightSensorPoller implements Runnable {
    * Float array to store RGB sample from middle color sensor.
    */
   private float[] colourData = new float[3];
-  
+
   /**
    * Float array to store sample from right color sensor.
    */
   private static float[] colorRight = new float[colorSensorRight.sampleSize()];
-  
+
   /**
    * Float array to store sample from left color sensor.
    */
@@ -87,14 +87,14 @@ public class LightSensorPoller implements Runnable {
           / Math.sqrt(colourRed * colourRed + colourGreen * colourGreen + colourBlue * colourBlue));
 
       updateDetectedColour(normRed, normGreen, normBlue);
-      
+
       long updateDuration;
       updateDuration = System.currentTimeMillis() - updateStart;
       if (updateDuration < PERIOD) {
         try {
           Thread.sleep(PERIOD - updateDuration);
         } catch (InterruptedException e) {
-            // nothing to do here
+          // nothing to do here
         }
       }
     }
@@ -140,14 +140,16 @@ public class LightSensorPoller implements Runnable {
     // for wall
     int wallStDEV = 2;
 
-    /*comparing red, green, blue values detected with a range of recorded samples.
-    Detected color is set if all three color values lie within a certain number
-    of standard deviations from mean*/
-    
-    if ((colourBlue >= GREEN_MEAN[2] - stdDevs * GREEN_SD[2]) 
+    /*
+     * comparing red, green, blue values detected with a range of recorded samples.
+     * Detected color is set if all three color values lie within a certain number
+     * of standard deviations from mean
+     */
+
+    if ((colourBlue >= GREEN_MEAN[2] - stdDevs * GREEN_SD[2])
         && (colourBlue <= GREEN_MEAN[2] + stdDevs * GREEN_SD[2])) {
 
-      if ((colourRed >= GREEN_MEAN[0] - stdDevs * GREEN_SD[0]) 
+      if ((colourRed >= GREEN_MEAN[0] - stdDevs * GREEN_SD[0])
           && (colourRed <= GREEN_MEAN[0] + stdDevs * GREEN_SD[0])) {
 
         if ((colourGreen >= GREEN_MEAN[1] - stdDevs * GREEN_SD[1])
@@ -158,11 +160,9 @@ public class LightSensorPoller implements Runnable {
       }
     }
 
-    if ((colourBlue >= BLUE_MEAN[2] - stdDevs * BLUE_SD[2]) 
-        && (colourBlue <= BLUE_MEAN[2] + stdDevs * BLUE_SD[2])) {
+    if ((colourBlue >= BLUE_MEAN[2] - stdDevs * BLUE_SD[2]) && (colourBlue <= BLUE_MEAN[2] + stdDevs * BLUE_SD[2])) {
 
-      if ((colourRed >= BLUE_MEAN[0] - stdDevs * BLUE_SD[0]) 
-          && (colourRed <= BLUE_MEAN[0] + stdDevs * BLUE_SD[0])) {
+      if ((colourRed >= BLUE_MEAN[0] - stdDevs * BLUE_SD[0]) && (colourRed <= BLUE_MEAN[0] + stdDevs * BLUE_SD[0])) {
 
         if ((colourGreen >= BLUE_MEAN[1] - stdDevs * BLUE_SD[1])
             && (colourGreen <= BLUE_MEAN[1] + stdDevs * BLUE_SD[1])) {

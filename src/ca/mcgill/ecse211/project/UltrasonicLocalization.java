@@ -18,8 +18,6 @@ import static ca.mcgill.ecse211.project.Resources.odometer;
 import static ca.mcgill.ecse211.project.Resources.rightMotor;
 import static ca.mcgill.ecse211.project.Resources.usSensor;
 
-import lejos.hardware.Sound;
-
 /**
  * The UltrasonicLocalization class implements the ultrasonic 
  * localization techniques using falling edge. Also
@@ -70,7 +68,7 @@ public class UltrasonicLocalization {
    * values to calculate angle to turn to in order to localize 
    * heading to 0 degrees.
    */
-  public void doLocalization() {   
+  public void doLocalization() {
     // set the rotational speed of the motors slow to get more sensor data
     leftMotor.setSpeed(MOTOR_ROT);
     rightMotor.setSpeed(MOTOR_ROT);
@@ -88,12 +86,12 @@ public class UltrasonicLocalization {
     while (readUsDistance() < WALL_DIST + errorMargin) {
       rotateAntiClockwise();
     }
-    
+
     // rotate until robot faces wall, record angle
     while (readUsDistance() > WALL_DIST) {
       rotateAntiClockwise();
     }
-    
+
     double angleA; // angle to first falling edge
     angleA = convertAngle(odometer.getXyt()[2]);
 
@@ -226,16 +224,16 @@ public class UltrasonicLocalization {
     leftMotor.setSpeed(MOTOR_HIGH); // set left and right motor speeds high
     rightMotor.setSpeed(MOTOR_HIGH);
     NavigatorUtility.turnBy(TURN_180); // turn robot by 180 degrees
-    double y;   // checkstyle raises violation if I combine double y = readUsDistance();
+    double y; // checkstyle raises violation if I combine double y = readUsDistance();
     y = readUsDistance(); // read y distance
-    
+
     leftMotor.setSpeed(MOTOR_HIGH);
     rightMotor.setSpeed(MOTOR_HIGH);
     NavigatorUtility.turnBy(TURN_90); // turn robot by 90 degrees
-    
+
     double x;
     x = readUsDistance(); // read x distance
-    
+
     NavigatorUtility.turnBy(TURN_90); // rotate 90 degrees and return to 0 degree heading
     return new double[] {x, y};
   }

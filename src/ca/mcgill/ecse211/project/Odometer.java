@@ -54,7 +54,7 @@ public class Odometer implements Runnable {
    * To record latest tachometer count from left motor.
    */
   private static int leftMotorTachoCount = 0;
-  
+
   /**
    * To record latest tachometer count from right motor.
    */
@@ -112,7 +112,7 @@ public class Odometer implements Runnable {
       double distR = Math.PI * WHEEL_RAD * (rightMotorTachoCount - lastTachoR) / 180;
       lastTachoL = leftMotorTachoCount;
       lastTachoR = rightMotorTachoCount;
-      double deltaD = 0.5 * (distL + distR); 
+      double deltaD = 0.5 * (distL + distR);
       double deltaT = (distL - distR) / BASE_WIDTH; // compute change in heading
       setTheta(this.theta + deltaT);
       double dX = deltaD * Math.sin(theta); // compute X component of displacement
@@ -184,7 +184,7 @@ public class Odometer implements Runnable {
    * @return the odometer y position
    */
   public double getY() {
-   
+
     return getXyt()[1];
   }
 

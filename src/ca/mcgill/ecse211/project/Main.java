@@ -29,12 +29,12 @@ public class Main {
    * Instance of UltrasoncicLocalization Class, used for initial localization.
    */
   private static UltrasonicLocalization usLocalizer;
-  
+
   /**
    * Instance of LightLocalization Class, used for odometer correction.
    */
   private static LightLocalization lightLocalizer;
-  
+
   /**
    * Instance of Navigation class, provides access to methods used for navigation of EV3.
    */
@@ -61,7 +61,7 @@ public class Main {
       new Thread(new LightSensorPoller()).start();
       lightLocalizer = new LightLocalization();
       navigation = new Navigation(lightLocalizer);
-      
+
       // Start US localization
       usLocalizer = new UltrasonicLocalization();
       usLocalizer.doLocalization();
@@ -70,14 +70,14 @@ public class Main {
       lightLocalizer.initialLocalizationUsingLS();
 
       // Set Initial bearings
-      // TODO depending on what corner is started in, 
+      // TODO depending on what corner is started in,
       // different initial positions and bearings must be set
       odometer.setXyt(TILE_SIZE, TILE_SIZE, 0.0);
-      
-      //beep 3 times to indicate end of initial localization
-      for(int i = 0 ; i < 3 ; i++) {
-    	  Sound.beep();
-    	  sleepFor(100);
+
+      // beep 3 times to indicate end of initial localization
+      for (int i = 0; i < 3; i++) {
+        Sound.beep();
+        sleepFor(100);
       }
 
       // navigate tunnel
@@ -91,7 +91,7 @@ public class Main {
       detector.searchVehicle(szr.ll.x, szr.ll.y, szr.ur.x, szr.ur.y);
 
 
-      // TODO return to start,assume the search vehicle terminates with 
+      // TODO return to start,assume the search vehicle terminates with
       // the robot back at the same place it started (in front of tunnel)
 
     }

@@ -7,7 +7,6 @@ import static ca.mcgill.ecse211.project.Resources.odometer;
 import static ca.mcgill.ecse211.project.Resources.rightMotor;
 import static ca.mcgill.ecse211.project.Resources.usSensor;
 
-
 /**
  * Class containing all methods used to navigate EV3 about the board, 
  * uses an instance of {@link LightLocalization}
@@ -73,8 +72,8 @@ public class Navigation {
     } else if (rotationAngle < -180) {
       rotationAngle = 360 + rotationAngle;
     }
-    
-    //angle error while turning
+
+    // angle error while turning, determined through lab 3 tests
     int nav_turn_error = 1;
     // correct the heading
     leftMotor.rotate(NavigatorUtility.convertAngle(rotationAngle + nav_turn_error), true);
@@ -122,7 +121,7 @@ public class Navigation {
       double xNew = odometer.getXyt()[0];
       double yNew = odometer.getXyt()[1];
       distanceTravelled = Math.sqrt((xNew - currX) * (xNew - currX) 
-                                      + (yNew - currY) * (yNew - currY));
+          + (yNew - currY) * (yNew - currY));
 
     }
     rightMotor.stop(true);
@@ -152,7 +151,7 @@ public class Navigation {
     double currX = odometer.getX();
 
     if (team.equals("Red")) { // red team
-    	//travel 1 tile away from tunnel opening
+      // travel 1 tile away from tunnel opening
       if (Math.abs(UR_Y * TILE_SIZE - currY) < Math.abs(LL_Y * TILE_SIZE - currY)) {
         travelTo(LL_X - 1, UR_Y, MOTOR_LOW);
       } else {
@@ -163,19 +162,19 @@ public class Navigation {
       NavigatorUtility.turnBy(-1 * currAngle);
       lightLocalizer.odoCorrectionFirst();
       lightLocalizer.odoCorrectionSecond();
-      //travel in a straight line through the tunnel
+      // travel in a straight line through the tunnel
       travelTo(LL_X - 1, (LL_Y + UR_Y) / 2, MOTOR_LOW);
       lightLocalizer.singleLineCorrection(90);
       travelTo(UR_X + 1, (LL_Y + UR_Y) / 2, 350);
     } else { // green team
-    	//travel 1 tile away from tunnel opening
+      // travel 1 tile away from tunnel opening
       travelTo(UR_X, LL_Y - 1, MOTOR_LOW);
       double currAngle = odometer.getAngle();
       currAngle = Math.toDegrees(currAngle);
       NavigatorUtility.turnBy(-1 * currAngle);
       lightLocalizer.odoCorrectionFirst();
       lightLocalizer.odoCorrectionSecond();
-    //travel in a straight line through the tunnel
+      // travel in a straight line through the tunnel
       travelTo((LL_X + UR_X) / 2, LL_Y - 1, MOTOR_LOW);
       lightLocalizer.singleLineCorrection(90);
       travelTo((LL_X + UR_X) / 2, UR_Y + 1, 350);
