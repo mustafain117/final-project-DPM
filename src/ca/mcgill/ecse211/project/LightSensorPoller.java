@@ -160,9 +160,11 @@ public class LightSensorPoller implements Runnable {
       }
     }
 
-    if ((colourBlue >= BLUE_MEAN[2] - stdDevs * BLUE_SD[2]) && (colourBlue <= BLUE_MEAN[2] + stdDevs * BLUE_SD[2])) {
+    if ((colourBlue >= BLUE_MEAN[2] - stdDevs * BLUE_SD[2]) 
+        && (colourBlue <= BLUE_MEAN[2] + stdDevs * BLUE_SD[2])) {
 
-      if ((colourRed >= BLUE_MEAN[0] - stdDevs * BLUE_SD[0]) && (colourRed <= BLUE_MEAN[0] + stdDevs * BLUE_SD[0])) {
+      if ((colourRed >= BLUE_MEAN[0] - stdDevs * BLUE_SD[0]) 
+          && (colourRed <= BLUE_MEAN[0] + stdDevs * BLUE_SD[0])) {
 
         if ((colourGreen >= BLUE_MEAN[1] - stdDevs * BLUE_SD[1])
             && (colourGreen <= BLUE_MEAN[1] + stdDevs * BLUE_SD[1])) {
