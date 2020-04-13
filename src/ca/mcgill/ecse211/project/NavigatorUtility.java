@@ -57,12 +57,12 @@ public class NavigatorUtility {
   /**
    * Rotates forward in a straight line for specified distance.
    * 
-   * @param distance the distance
+   * @param distance the distance in millimeters
    * @param speed the speed in deg/s
    */
   public static void moveDistFwd(int distance, int speed) {
     // Convert linear distance to turns
-    int rotationAngle = (int) (distance * Resources.DIST_TO_DEG / 100);
+    int rotationAngle = (int) (distance * Resources.DIST_TO_DEG / 100); //division by 100 because input is in mm
     leftMotor.setSpeed(speed); // Roll both motors forward
     rightMotor.setSpeed(speed);
     leftMotor.rotate(rotationAngle, true); // Rotate left motor - DO NOT BLOCK

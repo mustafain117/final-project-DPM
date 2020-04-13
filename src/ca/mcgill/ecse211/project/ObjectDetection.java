@@ -6,6 +6,10 @@ import static ca.mcgill.ecse211.project.Resources.TILE_SIZE;
 import static ca.mcgill.ecse211.project.Resources.leftMotor;
 import static ca.mcgill.ecse211.project.Resources.odometer;
 import static ca.mcgill.ecse211.project.Resources.rightMotor;
+import static ca.mcgill.ecse211.project.Resources.HALF_TILE;
+import static ca.mcgill.ecse211.project.Resources.THIRD_OF_TILE
+;
+
 
 import ca.mcgill.ecse211.playingfield.Point;
 import ca.mcgill.ecse211.playingfield.Region;
@@ -28,6 +32,10 @@ import lejos.hardware.Sound;
  */
 public class ObjectDetection implements Runnable {
 
+	/**
+	 * This is the the limit to how close we want the robot to get ton an object
+	 * At 5 cm readings can be done, not that US is receeded into robot so LS is actually 3cm away
+	 */
   private static final int SAFE_DIST = 5;
 
 
@@ -52,15 +60,15 @@ public class ObjectDetection implements Runnable {
   private LightLocalization lightLoc;
   
   /*
-   * Coordinates of Tunnel entrance 
-   * (the center of the line in front of the entrance).
+    Coordinates of Tunnel entrance 
+    (the center of the line in front of the entrance).
    */
   double tunX;
   double tunY;
   double tunTheta;
   
-  /**
-   * Search zone parameters.
+  /*
+    Converted search zone parameters, in centimeters 
    */
   private double SZ_LL_X;
   private double SZ_LL_Y;
@@ -72,8 +80,8 @@ public class ObjectDetection implements Runnable {
    */
   private int currDirection;
   
-  /**
-   * Grid next location parameters.
+  /*
+    Grid next location parameters.
    */
   private double nextX;
   private double nextY;
@@ -167,11 +175,11 @@ public class ObjectDetection implements Runnable {
     Point IL_UR = island.ur;
 
     // Correcting the position in case the robot is on the edge of the search zone
-    closestCornerX = (closestCornerX == IL_LL.x) ? closestCornerX + 0.5 * TILE_SIZE : closestCornerX;
-    closestCornerX = (closestCornerX == IL_UR.x) ? closestCornerX - 0.5 * TILE_SIZE : closestCornerX;
+    closestCornerX = (closestCornerX == IL_LL.x) ? closestCornerX + HALF_TILE : closestCornerX;
+    closestCornerX = (closestCornerX == IL_UR.x) ? closestCornerX - HALF_TILE : closestCornerX;
 
-    closestCornerY = (closestCornerY == IL_LL.y) ? closestCornerY + 0.5 * TILE_SIZE : closestCornerY;
-    closestCornerY = (closestCornerY == IL_UR.y) ? closestCornerY - 0.5 * TILE_SIZE : closestCornerY;
+    closestCornerY = (closestCornerY == IL_LL.y) ? closestCornerY + HALF_TILE : closestCornerY;
+    closestCornerY = (closestCornerY == IL_UR.y) ? closestCornerY - HALF_TILE : closestCornerY;
 
     // Start object detection
     detectObject(Thread.currentThread());
@@ -179,28 +187,29 @@ public class ObjectDetection implements Runnable {
     moveToWaypoint(closestCornerX, closestCornerY);
 
     /*
-     * To simplify the search procedure, make the robot over to 
-     * the UL corner before starting grid movement. This
-     * decreases the number of possible permutations of grid movement.
+      To simplify the search procedure, make the robot over to 
+      the UL corner before starting grid movement. This
+      decreases the number of possible permutations of grid movement.
+      Remember that the SZ parameters are in centimeters.
      */
-
+    
     if (startCorner == 2) { // upper right
-      moveToWaypoint(SZ_LL_X + TILE_SIZE, SZ_UR_Y); // move to UL tile edge
+      moveToWaypoint(SZ_LL_X + TILE_SIZE, SZ_UR_Y); // move to right tile edge of UL corner of SZ 
       lightLoc.singleLineCorrection(0); // Localize
-      moveToWaypoint(SZ_LL_X + 0.5 * TILE_SIZE, SZ_UR_Y); // Move to middle of UL tile
+      moveToWaypoint(SZ_LL_X + HALF_TILE, SZ_UR_Y); // Move to middle of UL corner of SZ tile
     }
     if (startCorner == 3) { // lower right
       // move to UR corner, middle of Tile
-      moveToWaypoint(SZ_UR_X - 0.5 * TILE_SIZE, SZ_UR_Y - 0.5 * TILE_SIZE); 
+      moveToWaypoint(SZ_UR_X - HALF_TILE, SZ_UR_Y - HALF_TILE); 
 
       moveToWaypoint(SZ_LL_X + TILE_SIZE, SZ_UR_Y);
       lightLoc.singleLineCorrection(0);
-      moveToWaypoint(SZ_LL_X + 0.5 * TILE_SIZE, SZ_UR_Y);
+      moveToWaypoint(SZ_LL_X + HALF_TILE, SZ_UR_Y);
     }
     if (startCorner == 4) { // lower left
       moveToWaypoint(SZ_LL_X, SZ_UR_Y - TILE_SIZE);// move to UL tile edge
       lightLoc.singleLineCorrection(0); // Localize
-      moveToWaypoint(SZ_LL_X, SZ_UR_Y - 0.5 * TILE_SIZE);// Move to middle of UL tile
+      moveToWaypoint(SZ_LL_X, SZ_UR_Y - HALF_TILE);// Move to middle of UL tile
     }
 
     /*
@@ -210,7 +219,7 @@ public class ObjectDetection implements Runnable {
      * the UL corner down to the LL corner and the robot
      * goes through each column until it reaches either the UR or LR corner.
      */
-    nextX = SZ_LL_X + 0.5 * TILE_SIZE;
+    nextX = SZ_LL_X + HALF_TILE;
     nextY = SZ_UR_Y - TILE_SIZE;
 
     while (true) {
@@ -221,47 +230,55 @@ public class ObjectDetection implements Runnable {
       }
 
       // move down to mid last tile
-      nextY += 0.5 * TILE_SIZE;
+      nextY += HALF_TILE;
       moveToWaypoint(nextX, nextY);
 
       // If robot is not in bottom right corner, move to next x line 
       // to localize and the move to middle, i.e. 0.5 * TILE_WIDTH, 
       // of next top tile
-      if (nextX + 0.5 * TILE_SIZE == SZ_UR_X) {
+      if (nextX + HALF_TILE == SZ_UR_X) {
         break;
       }
-      // Move to next x line to localize and the move to middle of next bottom tile
-      nextX += 0.5 * TILE_SIZE;
+      // Move to next x line to localize and then move to middle of next bottom tile
+      nextX += HALF_TILE;
       moveToWaypoint(nextX, nextY);
       lightLoc.singleLineCorrection(0);
-      nextX += 0.5 * TILE_SIZE;
+      nextX += HALF_TILE;
       moveToWaypoint(nextX, nextY);
 
       // Move up to top of search zone
-      nextY += 0.5 * TILE_SIZE;
+      nextY += HALF_TILE;
       while (nextY != SZ_UR_Y) {
         moveToWaypoint(nextX, nextY);
         lightLoc.singleLineCorrection(0);
         nextY += TILE_SIZE;
       }
 
-      nextY += 0.5 * TILE_SIZE;
+      nextY += HALF_TILE;
       moveToWaypoint(nextX, nextY);
 
       // If robot is not in top right corner, move to next x line 
       // to localize and the move to middle of next top tile
-      if (nextX + 0.5 * TILE_SIZE == SZ_UR_X) {
+      if (nextX + HALF_TILE == SZ_UR_X) {
         break;
       }
-      nextX += 0.5 * TILE_SIZE;
+      nextX += HALF_TILE;
       moveToWaypoint(nextX, nextY);
       lightLoc.singleLineCorrection(0);
-      nextX += 0.5 * TILE_SIZE;
+      nextX += HALF_TILE;
       moveToWaypoint(nextX, nextY);
 
     }
   }
-
+  
+  /**
+   * Method/thread used to detect objects:
+   * If object is an obstacle, this thread pauses the grid movement thread (run)
+   * and calls the avoidance method (once completed run thread is allowed to continue)
+   * If object is our trailer, then initiate towing and move backto tunnel entrance
+   * @param trd
+   * @author Bruno
+   */
   private void detectObject(final Thread trd) {
 
     (new Thread() {
@@ -273,17 +290,16 @@ public class ObjectDetection implements Runnable {
           if (dist < SAFE_DIST) {
             if (!isObstacle()) {
               towVehicle();
-              // go back to tunnel entrance
-              // run detector in order to evade obstacles on the way to the tunnel
-              detectObject(Thread.currentThread());
-              moveToWaypoint(odometer.getXyt()[0], tunY);
-              moveToWaypoint(tunX, tunY);
-              navigation.turnTo(tunTheta);
-              NavigatorUtility.turnBy(180);
+              
+              // Go back to tunnel entrance
+              
+              detectObject(Thread.currentThread());// run detector in order to evade obstacles on the way to the tunnel
+              moveToWaypoint(odometer.getXyt()[0], tunY); //move to the correct Y coordinate of tunnel entrance (same x as current)
+              moveToWaypoint(tunX, tunY); // move to correct X coordinate of tunnel
+              navigation.turnTo(tunTheta+180);  //move to theta robot had exiting tunnel +180 degrees to face tunnel
             } else {
               // Pause the thread calling object detection so that the obstacle can be avoided
-
-              // If thread was passed from recursive call of detectObject
+              // If thread was passed from recursive call of detectObject, it will pause the movement back to tunnel entrance
               if (trd != null) {
                 try {
                   trd.wait();
@@ -315,6 +331,12 @@ public class ObjectDetection implements Runnable {
     double[] odoValues = odometer.getXyt();
     double currX = odoValues[0];
     double currY = odoValues[1];
+    
+    /*
+     We assume that the obstacle is 1 tile by 1 tile
+     Therefore, to avoid it, we fork off to a neighboring tile
+     Then, move forward by 2 tiles to pass obstacle before rejoining original lane
+     */
 
     if (currDirection == 1) { // +y direction
 
@@ -399,7 +421,7 @@ public class ObjectDetection implements Runnable {
     double hypotenuse = Math.sqrt(distY * distY + distX * distX);
     double currX = odoValues[0];
     double currY = odoValues[1];
-    double distanceTravelled = 0;
+    double distanceTravelled = 0; //intializing to 0 
 
     while (distanceTravelled <= hypotenuse) {
       leftMotor.setSpeed(MOTOR_LOW);
@@ -458,13 +480,13 @@ public class ObjectDetection implements Runnable {
     // Open claw
 	  claw.openClaw();
     // move backwards to give space for turn
-    NavigatorUtility.moveDistFwd((int) (-(TILE_SIZE) * 100 / 3), 200); 
+    NavigatorUtility.moveDistFwd((int) (-(THIRD_OF_TILE) * 100 ), 200); 
     
     // rotate 180 to have claw face object
     NavigatorUtility.turnBy(180); 
     
     // move onto object
-    NavigatorUtility.moveDistFwd((int) (-(TILE_SIZE) * 100 / 3), 200);
+    NavigatorUtility.moveDistFwd((int) (-(THIRD_OF_TILE) * 100), 200);
     
     // close claw
     claw.closeClaw();

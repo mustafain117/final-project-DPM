@@ -3,6 +3,9 @@ package ca.mcgill.ecse211.project;
 import ca.mcgill.ecse211.playingfield.Point;
 import ca.mcgill.ecse211.playingfield.Region;
 import ca.mcgill.ecse211.wificlient.WifiConnection;
+
+import static ca.mcgill.ecse211.project.Resources.TILE_SIZE;
+
 import java.math.BigDecimal;
 import java.util.Map;
 import lejos.hardware.ev3.LocalEV3;
@@ -114,9 +117,9 @@ public class Resources {
   public static final double US_OFFSET = 8;
   
   /**
-   * The robot width in centimeters.
+   * The color value threshold for the line detection
    */
-  
+  public static final double LINE_COLOR_THRESHOLD=30;
   /**
    * The angle of rotation for the claw to open.
    */
@@ -146,6 +149,18 @@ public class Resources {
    * The tile size in centimeters. Note that 30.48 cm = 1 ft.
    */
   public static final double TILE_SIZE = 30.48;
+  
+  /**
+   * Half a tile in centimeters =30.48/2 cm
+   */
+  public static final double HALF_TILE= 0.5*TILE_SIZE;
+  
+  /**
+   * Third of a tile, in centimeters
+   */
+  public static final double  THIRD_OF_TILE=TILE_SIZE/ 3;
+
+
 
   /**
    * Standard deviation for colour sensing.
